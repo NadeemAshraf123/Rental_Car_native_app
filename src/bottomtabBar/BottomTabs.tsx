@@ -7,7 +7,7 @@ import homeIcon from '../assets/bottomTabBar/homeIcon.png';
 import bellIcon from '../assets/bottomTabBar/bellIcon.png';
 import sendIcon from '../assets/bottomTabBar/sendIcon.png';
 
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/home/HomeScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SendScreen from '../screens/ChatScreen';
 import {Image} from 'react-native';
