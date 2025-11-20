@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 
 const notifications = [
@@ -79,7 +80,11 @@ const NotificationScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}  >
+      <StatusBar
+        barStyle="white-content"
+        backgroundColor="#F9864A"
+      />
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Notification</Text>

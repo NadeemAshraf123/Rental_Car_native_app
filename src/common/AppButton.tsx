@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     },
     text: {
         color: '#fff',
-        fontSize: 16,
-        fontWeight: '700',
+        fontSize: 13,
+        fontWeight: '900',
     },
     ghostText: {
         color: '#fff',

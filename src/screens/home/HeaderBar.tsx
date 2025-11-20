@@ -33,7 +33,7 @@ export default function HeaderBar() {
 
           <TouchableOpacity onPress={openDrawer}>
             <Image
-              source={{uri: 'https://i.pravatar.cc/100'}}
+              source={require('../../assets/profile/profile.png')}
               style={styles.profilePic}
             />
           </TouchableOpacity>
@@ -57,7 +57,7 @@ export default function HeaderBar() {
         <View style={styles.searchContainer}>
           <Icon
             name="search"
-            size={20}
+            size={28}
             color="#FF7A00"
             style={styles.searchIcon}
           />
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
 
   searchContainer: {
-    width: '80%' ,
+    width: '70%' ,
     alignSelf: 'center', 
     flexDirection: 'row',
     alignItems: 'center',
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     height: 50,
-    marginTop: 20,
+    marginTop: 15,
     elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -155,7 +155,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 46},
   },
   searchIcon: {
-    marginRight: 10,
+    marginRight: 5,
+    fontWeight: 900,
   },
 
   searchInput: {

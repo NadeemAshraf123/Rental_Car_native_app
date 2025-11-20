@@ -14,6 +14,10 @@ import AuthyVerificationScreen from './src/screens/AuthyVerificationScreen';
 import NewPasswordScreen from './src/screens/NewPasswordScreen';
 import BottomTabs from './src/bottomtabBar/BottomTabs';
 import CustomDrawerContent from './src/screens/drawer/CustomDrawerContent';
+import EditProfile from './src/screens/profile/EditProfileScreen';
+import ProfileNotificationScreen from './src/screens/profile/ProfileNotificationScreen';
+import LanguageScreen from './src/screens/profile/LanguageScreen';
+import PrivacyPolicyScreen from './src/screens/profile/PrivacyPolicyScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -23,6 +27,11 @@ function DrawerNavigator() {
     <Drawer.Navigator
       screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{
+    drawerStyle: {
+      width: 240,
+    },
+  }}
     >
       <Drawer.Screen name="Tabs" component={BottomTabs} />
     </Drawer.Navigator>
@@ -46,6 +55,13 @@ function App(): React.JSX.Element {
           <Stack.Screen name="Home" component={DrawerNavigator} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+
+          <Stack.Screen name="EditProfile" component={ EditProfile  } />
+          <Stack.Screen name="ProfileNotificationScreen" component={ ProfileNotificationScreen  } />
+          <Stack.Screen name="LanguageScreen" component={ LanguageScreen  } />
+          <Stack.Screen name="PrivacyPolicyScreen" component={ PrivacyPolicyScreen  } />
+
+
           <Stack.Screen
             name="ForgotPasswordScreen"
             component={ForgotPasswordScreen}

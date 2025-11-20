@@ -18,8 +18,10 @@ export default function HomeScreen({ navigation }: any) {
         <View style={styles.sectionTitleWrapper}>
           <Text style={styles.sectionTitle}>GO</Text>
         </View>
+        
 
       </ScrollView>
+
     </View>
   );
 }
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     position: 'relative',
+  
   },
 
   content: {

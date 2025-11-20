@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
-    color: '#333',
+    fontSize: 13,
+    color: '#989595ff',
   },
   iconWrapper: {
     width: 24,

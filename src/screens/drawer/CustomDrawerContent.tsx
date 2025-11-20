@@ -2,176 +2,256 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   TouchableOpacity,
   Switch,
+  Modal,
+  StyleSheet,
   ScrollView,
+  useColorScheme,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 
 
-export default function CustomDrawerContent(props: any) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+const CustomDrawerContent = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [role, setRole] = useState<'Agency' | 'Owner'>('Agency');
+  const [themeLight, setThemeLight] = useState(true);
+  const [accountModalVisible, setAccountModalVisible] = useState(false);
+  
+  const scheme = useColorScheme();
+  const navigation = useNavigation();
+
+  const isDark =  !themeLight;
+
+  const dynamicStyles = getStyles(isDark);
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.container}>
+    <ScrollView style={dynamicStyles.container}>
       
-      <View style={styles.profileSection}>
-        <Image source={{ uri: 'https://i.pravatar.cc/100' }} style={styles.profilePic} />
-        <Text style={styles.username}>home</Text>
-
-      
-        <View style={styles.roleToggle}>
-          <TouchableOpacity
-            style={[styles.roleButton, role === 'Agency' && styles.activeRole]}
-            onPress={() => setRole('Agency')}
-          >
-            <Text style={styles.roleText}>Agency</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.roleButton, role === 'Owner' && styles.activeRole]}
-            onPress={() => setRole('Owner')}
-          >
-            <Text style={styles.roleText}>Owner</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={dynamicStyles.profileContainer}>
+        <Image source={require('../../assets/profile/profile.png')} style={dynamicStyles.profileImage} />
+        <TouchableOpacity style={dynamicStyles.cameraIcon}>
+          <Icon name="photo-camera" size={12} color="#fff" />
+        </TouchableOpacity>
       </View>
 
     
-      <ScrollView style={styles.menuSection}>
-        <DrawerItem label="Edit profile information" icon="edit" />
-        <DrawerItem
-          label="Notifications"
-          icon="notifications"
-          rightComponent={
+      <View style={dynamicStyles.homeContainer}>
+        <Text style={dynamicStyles.homeText}>home</Text>
+        <Image
+          source={require('../../assets/profile/profileIcons/rightMove.png')}
+          style={dynamicStyles.iconImage}
+        />
+      </View>
+
+      <View style={dynamicStyles.card}>
+        <TouchableOpacity style={dynamicStyles.row} onPress={() => setAccountModalVisible(true)}>
+          <View style={dynamicStyles.SwitchContainer}>
+            <Image
+              source={require('../../assets/profile/profileIcons/userIcon.png')}
+              style={dynamicStyles.CommonIconImage}
+            />
+            <Text style={dynamicStyles.rowText}>Switch the account</Text>
+            <View style={dynamicStyles.SwitchiconContainer}>
+              <Icon name="arrow-drop-down" size={20} color="#fff" />
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <Modal visible={accountModalVisible} transparent animationType="fade">
+        <View style={dynamicStyles.modalOverlay}>
+          <View style={dynamicStyles.modalContent}>
+            <TouchableOpacity onPress={() => setAccountModalVisible(false)}>
+              <Text style={dynamicStyles.modalOption}>Agency</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setAccountModalVisible(false)}>
+              <Text style={dynamicStyles.modalOption}>Profile</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <View style={dynamicStyles.card}>
+        <TouchableOpacity style={dynamicStyles.row} onPress={() => navigation.navigate('EditProfile')}>
+          <Icon name="edit" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Edit profile information</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={dynamicStyles.row} onPress={() => navigation.navigate('ProfileNotificationScreen')}>
+          <Icon name="notifications" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Notifications</Text>
+          <View style={dynamicStyles.toggleContainer}>
+            <Text style={{ color: notificationsEnabled ? '#F9864A' : '#ccc' }}>
+              {notificationsEnabled ? 'On' : 'Off'}
+            </Text>
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              thumbColor="#FF7A00"
+              trackColor={{ false: '#fff', true: '#F9864A' }}
             />
-          }
-        />
-        <DrawerItem label="Language: English" icon="language" />
-        <DrawerItem label="Security" icon="lock" />
-        <DrawerItem
-          label={`Theme: ${isDarkMode ? 'Dark' : 'Light'} mode`}
-          icon="brightness-6"
-          rightComponent={
-            <Switch
-              value={isDarkMode}
-              onValueChange={setIsDarkMode}
-              thumbColor="#FF7A00"
-            />
-          }
-        />
-        <DrawerItem label="Help & Support" icon="help-outline" />
-        <DrawerItem label="Contact us" icon="call" />
-        <DrawerItem label="Privacy policy" icon="policy" />
-      </ScrollView>
+          </View>
+        </TouchableOpacity>
 
-    
-      <TouchableOpacity style={styles.logoutButton} onPress={() => props.navigation.navigate('LoginScreen')}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </DrawerContentScrollView>
-  );
-}
-
-function DrawerItem({
-  label,
-  icon,
-  rightComponent,
-}: {
-  label: string;
-  icon: string;
-  rightComponent?: React.ReactNode;
-}) {
-  return (
-    <View style={styles.drawerItem}>
-      <View style={styles.drawerItemLeft}>
-        <Icon name={icon} size={22} color="#FF7A00" style={{ marginRight: 10 }} />
-        <Text style={styles.drawerItemText}>{label}</Text>
+        <TouchableOpacity style={dynamicStyles.row} onPress={() => navigation.navigate('LanguageScreen')}>
+          <Icon name="language" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Language</Text>
+          <Text style={dynamicStyles.rightText}>English</Text>
+        </TouchableOpacity>
       </View>
-      {rightComponent}
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  profileSection: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  profilePic: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: '#FF7A00',
-  },
-  username: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: '#333',
-  },
-  roleToggle: {
-    flexDirection: 'row',
-    marginTop: 10,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-    padding: 4,
-  },
-  roleButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-  },
-  activeRole: {
-    backgroundColor: '#FF7A00',
-  },
-  roleText: {
-    color: '#333',
-    fontWeight: '600',
-  },
-  menuSection: {
-    marginTop: 10,
-  },
-  drawerItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#eee',
-  },
-  drawerItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  drawerItemText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  logoutButton: {
-    marginTop: 20,
-    backgroundColor: '#FF7A00',
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  logoutText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
+      <View style={dynamicStyles.card}>
+        <TouchableOpacity style={dynamicStyles.row}>
+          <Icon name="security" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Security</Text>
+        </TouchableOpacity>
+
+        <View style={dynamicStyles.row}>
+          <Icon name="palette" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Theme</Text>
+          <View style={dynamicStyles.toggleContainer}>
+            <Icon name="wb-sunny" size={15} color={themeLight ? '#FFD700' : '#ccc'} />
+            <Switch
+              value={themeLight}
+              onValueChange={() => setThemeLight(prev => !prev)}
+              trackColor={{ false: '#fff', true: '#F9864A' }}
+            />
+            <Icon name="nights-stay" size={15} color={!themeLight ? '#333' : '#ccc'} />
+          </View>
+        </View>
+      </View>
+
+      <View style={dynamicStyles.card}>
+        <TouchableOpacity style={dynamicStyles.row}>
+          <Icon name="help-outline" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Help & Support</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={dynamicStyles.row}>
+          <Icon name="contact-mail" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Contact us</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={dynamicStyles.row} onPress={() => navigation.navigate('PrivacyPolicyScreen')}>
+          <Icon name="privacy-tip" size={15} color={isDark ? '#fff' : '#000'} />
+          <Text style={dynamicStyles.rowText}>Privacy policy</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={dynamicStyles.logoutButton}>
+        <Icon name="logout" size={20} color="#fff" />
+        <Text style={dynamicStyles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+export default CustomDrawerContent;
+
+
+const getStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: { padding: 16, backgroundColor: isDark ? '#121212' : '#fff' },
+    profileContainer: { alignItems: 'center', marginBottom: 16 },
+    profileImage: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      borderWidth: 6,
+      borderColor: '#e3753b',
+    },
+    cameraIcon: {
+      position: 'absolute',
+      bottom: 0,
+      right: '35%',
+      backgroundColor: 'gray',
+      borderRadius: 12,
+      padding: 4,
+    },
+    homeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    homeText: {
+      fontWeight: 'bold',
+      fontSize: 16,
+      color: isDark ? '#fff' : '#000',
+    },
+    iconImage: {
+      width: 10,
+      height: 10,
+      resizeMode: 'contain',
+      marginLeft: 5,
+    },
+    card: {
+      backgroundColor: isDark ? '#1e1e1e' : '#fff',
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      marginVertical: 14,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 3,
+    },
+    rowText: { flex: 1, marginLeft: 8, fontSize: 12, color: isDark ? '#fff' : '#000' },
+    rightText: { fontSize: 12, color: 'blue' },
+    toggleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0,0,0,0.3)',
+    },
+    modalContent: {
+      margin: 32,
+      backgroundColor: '#fff',
+      borderRightColor: 'red',
+      borderRadius: 8,
+      padding: 16,
+    },
+    modalOption: {
+      fontSize: 12,
+      paddingVertical: 8,
+      borderBottomWidth: 0.5,
+      borderColor: '#ccc',
+    },
+    SwitchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    CommonIconImage: {
+      width: 20,
+      height: 20,
+    },
+    SwitchiconContainer: {
+      backgroundColor: '#F9864A',
+      width: 22,
+      height: 14,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      backgroundColor: '#FF5722',
+      padding: 12,
+      borderRadius: 8,
+      marginTop: 104,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoutText: {
+      color: '#fff',
+      fontSize: 16,
+      marginLeft: 8,
+    },
+  });
