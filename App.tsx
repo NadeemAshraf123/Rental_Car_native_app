@@ -18,6 +18,11 @@ import EditProfile from './src/screens/profile/EditProfileScreen';
 import ProfileNotificationScreen from './src/screens/profile/ProfileNotificationScreen';
 import LanguageScreen from './src/screens/profile/LanguageScreen';
 import PrivacyPolicyScreen from './src/screens/profile/PrivacyPolicyScreen';
+import CarsDetailScreen from './src/screens/carsScreens/CarsDetailScreen';
+import TimeSelectingScreen from './src/screens/timeSelectingSecreen/TimeSelectingScreen';
+import BookingScreen from './src/screens/bookingScreen/BookingScreen';
+import OurAgencyCarsScreen from './src/screens/agency/OurAgencyCarsScreen';
+import RatingScreen from './src/screens/ratingScreens/RatingScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -25,13 +30,13 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator() {
   return (
     <Drawer.Navigator
-      screenOptions={{ headerShown: false }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-    drawerStyle: {
+      screenOptions={{ headerShown: false,
+        drawerStyle: {
       width: 240,
     },
   }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+
     >
       <Drawer.Screen name="Tabs" component={BottomTabs} />
     </Drawer.Navigator>
@@ -43,7 +48,7 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{flex: 1,}}>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Landing"
@@ -74,6 +79,15 @@ function App(): React.JSX.Element {
             name="NewPasswordScreen"
             component={NewPasswordScreen}
           />
+
+          <Stack.Screen name="CarsDetailScreen" component={ CarsDetailScreen  } />
+          <Stack.Screen name="TimeSelectingScreen" component={ TimeSelectingScreen  } />
+          <Stack.Screen name="BookingScreen" component={ BookingScreen  } />
+          <Stack.Screen name="OurAgencyCarsScreen" component={ OurAgencyCarsScreen  } />
+          <Stack.Screen name="RatingScreen" component={ RatingScreen  } />
+
+
+
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

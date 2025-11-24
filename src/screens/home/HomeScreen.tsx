@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ImageBackground , Text } from 'react-native';
+import { View, StyleSheet, ImageBackground , Text, TouchableOpacity } from 'react-native';
 import HeaderBar from './HeaderBar';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -18,9 +18,25 @@ export default function HomeScreen({ navigation }: any) {
         <View style={styles.sectionTitleWrapper}>
           <Text style={styles.sectionTitle}>GO</Text>
         </View>
+
+        <View style={styles.CarBtn}>
+
+         <TouchableOpacity onPress={() =>  navigation.navigate('CarsDetailScreen')} style={styles.btn}>
+        <Text>Cars</Text>
+      </TouchableOpacity>
         
 
+         <TouchableOpacity  onPress={() =>  navigation.navigate('OurAgencyCarsScreen')}  style={styles.btn}>
+        <Text>Agencies</Text>
+      </TouchableOpacity>
+
+         <TouchableOpacity style={styles.btn}>
+        <Text>Famous</Text>
+      </TouchableOpacity>
+      </View>
       </ScrollView>
+
+     
 
     </View>
   );
@@ -55,4 +71,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FF7A00',
   },
+  CarBtn: {
+    padding: 10,
+    marginBottom: 5,
+    flexDirection: 'row',
+    gap: 50,
+
+
+
+  },
+  btn: {
+    backgroundColor: '#F9864A',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+
+
+  }
 });

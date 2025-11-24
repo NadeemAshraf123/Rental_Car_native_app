@@ -139,7 +139,7 @@ const CustomDrawerContent = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={dynamicStyles.logoutButton}>
+      <TouchableOpacity style={dynamicStyles.logoutButton}  onPress={() => navigation.navigate('RatingScreen')}>
         <Icon name="logout" size={20} color="#fff" />
         <Text style={dynamicStyles.logoutText}>Logout</Text>
       </TouchableOpacity>
