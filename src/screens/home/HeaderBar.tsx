@@ -37,21 +37,6 @@ export default function HeaderBar() {
               style={styles.profilePic}
             />
           </TouchableOpacity>
-
-          {/* <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <View style={styles.outerRing}>
-              <LinearGradient
-                colors={['#F9864A', '#8B4513']}
-                style={styles.gradientRing}>
-                <View style={styles.whiteBorder}>
-                  <Image
-                    source={{uri: 'https://i.pravatar.cc/100'}}
-                    style={styles.profilePic}
-                  />
-                </View>
-              </LinearGradient>
-            </View>
-          </TouchableOpacity> */}
         </View>
 
         <View style={styles.searchContainer}>

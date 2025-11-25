@@ -30,7 +30,7 @@ export default function HomeScreen({ navigation }: any) {
         <Text>Agencies</Text>
       </TouchableOpacity>
 
-         <TouchableOpacity style={styles.btn}>
+         <TouchableOpacity onPress={() =>  navigation.navigate('RegistrationScreen')} style={styles.btn}>
         <Text>Famous</Text>
       </TouchableOpacity>
       </View>

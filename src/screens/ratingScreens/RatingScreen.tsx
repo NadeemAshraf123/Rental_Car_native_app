@@ -15,17 +15,16 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 const { height, width } = Dimensions.get('window');
 
 
-const RatingScreen = () => {
-  // State to track the rating (0 to 5)
+const RatingScreen = ( {navigation} ) => {
+
   const [rating, setRating] = useState(4);
   const [comments, setComments] = useState('');
 
-  // Dummy user data
   const user = {
-    image: 'https://via.placeholder.com/150/FF8C00/FFFFFF?text=R', // Placeholder for user image
+    image: 'https://via.placeholder.com/150/FF8C00/FFFFFF?text=R',
   };
 
-  // Helper function to render a star icon based on the current rating
+
   const renderStar = (index) => {
     const starFilled = index <= rating;
     return (
@@ -41,49 +40,53 @@ const RatingScreen = () => {
   };
 
   const handleSubmit = () => {
-    console.log(`Rating: ${rating} stars, Comments: ${comments}`);
-    // Add logic here to submit the review to your backend
+    navigation.navigate('InviteFriendsScreen');
+
   };
 
   return (
     <View style={styles.container}>
       
-      {/* --- 1. Background Shapes (Absolute Positioning) --- */}
+      
       <View style={styles.background}>
-        {/* Large transparent/light orange shape 1 (top/middle) */}
-        <View style={styles.largeShape} /> 
-        {/* Smaller transparent/light orange shape 2 (top right) */}
-        <View style={styles.smallShape} /> 
+
+    <Image 
+          source={require('../../assets/avatar/avatar1.jpg')}
+          style={styles.backgroundImage1}
+          resizeMode="cover"
+        />
+
+        <Image 
+          source={require('../../assets/avatar/avatar1.jpg')}
+          style={styles.backgroundImage2}
+          resizeMode="contain" 
+        />
+        {/* <View style={styles.largeShape} />  */}
+        {/* <View style={styles.smallShape} />  */}
+
       </View>
 
-      {/* --- 2. Header (On top of background) --- */}
+    
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => console.log('Go back')}>
+        <TouchableOpacity onPress={() => navigation.navigate('CustomDrawerContent')} style={styles.headerArrow}>
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Rating</Text>
       </View>
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* --- 3. User Image (Absolute Positioned relative to the main card) --- */}
-          <Image
-            source={{ uri: user.image }}
-            style={styles.userImage}
-          />
-          
-          {/* --- 4. Main Content Card --- */}
-          <View style={styles.card}>
+        <View style={styles.card}>
             <Text style={styles.cardTitle}>How is your experience ?</Text>
             <Text style={styles.cardSubtitle}>
               Your feedback will help improve driving experience
             </Text>
 
-            {/* Star Rating Section */}
+        
             <View style={styles.ratingContainer}>
               {[1, 2, 3, 4, 5].map(renderStar)}
             </View>
 
-            {/* Additional Comments Input */}
+            
             <TextInput
               style={styles.commentInput}
               multiline
@@ -93,7 +96,7 @@ const RatingScreen = () => {
               value={comments}
             />
 
-            {/* Submit Button */}
+            
             <TouchableOpacity 
               style={styles.submitButton}
               onPress={handleSubmit}
@@ -101,6 +104,13 @@ const RatingScreen = () => {
               <Text style={styles.submitButtonText}>Submit Review</Text>
             </TouchableOpacity>
           </View>
+
+    
+          <Image
+            source = {require('../../assets/avatar/ratingprofile.png')}
+            style={styles.userImage}
+          />
+          
       </ScrollView>
     </View>
   );
@@ -112,24 +122,42 @@ export default RatingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8', // Light background color of the whole screen
+    backgroundColor: '#f8f8f8', 
   },
   scrollContent: {
     alignItems: 'center',
-    paddingTop: height * 0.2, // Pushes content down, below the absolute header/image start point
+    paddingTop: height * 0.2,
     paddingBottom: 40,
   },
-
-  // --- Background Shapes (Absolute) ---
   background: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: height * 0.4, // Height of the colored background area
+    // height: height * 0.4,
     overflow: 'hidden',
   },
-  // Simulates the large, transparent shape
+  backgroundImage1: {
+    
+    position: 'absolute',
+    width: width * 1.2,
+    height: width * 1.5,
+    top: -height * 0.1,
+    left: -width * 0.5,
+    opacity: 0.3, 
+    transform: [{ rotate: '45deg' }],
+  },
+
+  backgroundImage2: {
+    
+    position: 'absolute',
+    width: width * 0.8,
+    height: width * 0.8,
+    top: 50, 
+    right: -50, 
+    opacity: 0.5, 
+    
+  },
   largeShape: {
     position: 'absolute',
     top: -100,
@@ -137,9 +165,9 @@ const styles = StyleSheet.create({
     width: width * 1.5,
     height: height * 0.7,
     borderRadius: (height * 0.7) / 2,
-    backgroundColor: 'rgba(255, 140, 0, 0.1)', // Light orange/peach
+    backgroundColor: 'rgba(255, 140, 0, 0.1)',
   },
-  // Simulates the smaller, more opaque shape overlaying the large one
+  
   smallShape: {
     position: 'absolute',
     top: 50,
@@ -147,51 +175,60 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     height: width * 0.8,
     borderRadius: (width * 0.8) / 2,
-    backgroundColor: 'rgba(255, 140, 0, 0.2)', // Slightly more opaque
+    backgroundColor: 'rgba(255, 140, 0, 0.2)', 
   },
 
 
-  // --- Header Styles ---
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 50, // Adjust for status bar
-    position: 'absolute', // Keep header on top of everything
+    paddingTop: 50, 
+    position: 'absolute',
     left: 0,
     right: 0,
     zIndex: 10,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#000',
-    marginLeft: 20,
+    // marginLeft: 20,
   },
 
-  // --- User Image & Main Card ---
+  headerArrow: {
+  position: 'absolute',
+  left: 20,
+  top: 50,
+  padding: 5,
+},
+
+  
   userImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     borderWidth: 4,
-    borderColor: '#fff',
-    zIndex: 5, // Ensures image is above the card
-    marginBottom: -50, // Pulls the image up to overlap the card top
+    borderColor: '#1e1c1cff',
+    zIndex: 10,
+
+    marginTop: -420, 
   },
   card: {
     width: '80%',
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 20,
-    paddingTop: 70, // Create space for the image to overlap
+    paddingTop: 60,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 8,
+    elevation: 2,
+    zIndex: 0,
+    marginTop: 90,
   },
   cardTitle: {
     fontSize: 20,
@@ -207,8 +244,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     paddingHorizontal: 15,
   },
-
-  // --- Rating Styles ---
   ratingContainer: {
     flexDirection: 'row',
     marginBottom: 30,
@@ -218,25 +253,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
 
-  // --- Input and Button ---
   commentInput: {
     width: '100%',
-    height: 120,
+    height: 100,
     backgroundColor: '#f5f5f5',
     borderRadius: 15,
     padding: 15,
     fontSize: 16,
     color: '#333',
     textAlignVertical: 'top',
-    marginBottom: 30,
+    marginBottom: 50,
     borderWidth: 1,
     borderColor: '#eee',
   },
   submitButton: {
     width: '100%',
-    backgroundColor: '#f87232', // Primary Orange color
-    borderRadius: 15,
-    paddingVertical: 18,
+    backgroundColor: '#f87232', 
+    borderRadius: 10,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   submitButtonText: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {View, StyleSheet, ImageBackground, Image} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -10,10 +10,18 @@ import activeBg from '../assets/bottomTabBar/activeBg.png';
 import HomeScreen from '../screens/home/HomeScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SendScreen from '../screens/ChatScreen';
+import { storage } from '../../App';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
+  // const userType= storage.getString("userRole")
+  // console.log("userType", userType);
+  // useEffect(()=>{
+    
+
+  // },[storage])
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -49,9 +57,19 @@ const BottomTabs = () => {
           );
         },
       })}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Notifications" component={NotificationScreen} />
-      <Tab.Screen name="Send" component={SendScreen} />
+      {/* {usertype === 'user' ? ( */}
+        {/* <> */}
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Notifications" component={NotificationScreen} />
+          <Tab.Screen name="Send" component={SendScreen} />
+        {/* </> */}
+      {/* ) : (
+        <>
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Notifications" component={NotificationScreen} />
+          <Tab.Screen name="Send" component={SendScreen} />
+        </>
+      )} */}
     </Tab.Navigator>
   );
 };
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 25,
     top: -25,
-    
+
     elevation: 20,
     shadowColor: '#000',
     shadowOpacity: 0.15,
@@ -96,16 +114,14 @@ const styles = StyleSheet.create({
     width: 100,
     height: 50,
     left: -25,
-    
   },
   iconBgCircle: {
-  backgroundColor: '#F9864A',
-  padding: 20,
-  width: 40,
-  height: 40,
-  borderRadius: 30,
-  justifyContent: 'center',
-  alignItems: 'center',
-}
-
+    backgroundColor: '#F9864A',
+    padding: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

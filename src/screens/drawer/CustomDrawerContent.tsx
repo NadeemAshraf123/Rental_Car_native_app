@@ -5,19 +5,22 @@ import {
   Image,
   TouchableOpacity,
   Switch,
-  Modal,
-  StyleSheet,
+  StyleSheet, 
   ScrollView,
   useColorScheme,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import { storage } from '../../../App';
 
 
 const CustomDrawerContent = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [themeLight, setThemeLight] = useState(true);
-  const [accountModalVisible, setAccountModalVisible] = useState(false);
+  const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState(false); 
+  
+  // State to track which account is currently active (Owner is 'owner', Agency is 'Agency')
+  const [activeAccount, setActiveAccount] = useState('owner'); 
   
   const scheme = useColorScheme();
   const navigation = useNavigation();
@@ -26,10 +29,28 @@ const CustomDrawerContent = () => {
 
   const dynamicStyles = getStyles(isDark);
 
+  const handleAccountSelection = (targetAccount: 'owner' | 'Agency') => {
+    setActiveAccount(targetAccount);
+    setIsAccountOptionsOpen(true); 
+    storage.set("userRole", targetAccount)
+    
+    if (targetAccount === 'Agency') {
+  
+        // navigation.navigate('OurAgencyCarsScreen');
+    } else {
+      
+        // navigation.navigate('HomeScreen');
+    }
+  };
+
+  const agencyOptionLabel = activeAccount === 'owner' ? 'Agency' : 'User';
+  const agencyButtonTarget = activeAccount === 'owner' ? 'Agency' : 'owner';
+
   return (
     <ScrollView style={dynamicStyles.container}>
       
       <View style={dynamicStyles.profileContainer}>
+      
         <Image source={require('../../assets/profile/profile.png')} style={dynamicStyles.profileImage} />
         <TouchableOpacity style={dynamicStyles.cameraIcon}>
           <Icon name="photo-camera" size={12} color="#fff" />
@@ -38,40 +59,76 @@ const CustomDrawerContent = () => {
 
     
       <View style={dynamicStyles.homeContainer}>
-        <Text style={dynamicStyles.homeText}>home</Text>
+        <Text style={dynamicStyles.homeText}>{activeAccount === 'owner' ? 'home' : 'home'}</Text>
+        {/* Placeholder image usage (replace with actual image path) */}
         <Image
-          source={require('../../assets/profile/profileIcons/rightMove.png')}
+          source={require('../../assets/avatar/avatar1.jpg')}
           style={dynamicStyles.iconImage}
         />
       </View>
 
       <View style={dynamicStyles.card}>
-        <TouchableOpacity style={dynamicStyles.row} onPress={() => setAccountModalVisible(true)}>
+        
+        <TouchableOpacity 
+          style={dynamicStyles.row} 
+          onPress={() => setIsAccountOptionsOpen(prev => !prev)}
+        >
           <View style={dynamicStyles.SwitchContainer}>
+        
             <Image
               source={require('../../assets/profile/profileIcons/userIcon.png')}
               style={dynamicStyles.CommonIconImage}
             />
+           
             <Text style={dynamicStyles.rowText}>Switch the account</Text>
             <View style={dynamicStyles.SwitchiconContainer}>
-              <Icon name="arrow-drop-down" size={20} color="#fff" />
+              
+              <Icon 
+                name={isAccountOptionsOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
+                size={20} 
+                color="#fff" 
+              />
             </View>
           </View>
         </TouchableOpacity>
-      </View>
-
-      <Modal visible={accountModalVisible} transparent animationType="fade">
-        <View style={dynamicStyles.modalOverlay}>
-          <View style={dynamicStyles.modalContent}>
-            <TouchableOpacity onPress={() => setAccountModalVisible(false)}>
-              <Text style={dynamicStyles.modalOption}>Agency</Text>
+        
+       
+        {isAccountOptionsOpen && (
+          <View>
+            
+            <TouchableOpacity 
+              style={[
+                dynamicStyles.accountOptionRow,
+                
+                activeAccount === 'Agency' && dynamicStyles.accountOptionRowActive
+              ]} 
+              onPress={() => handleAccountSelection(agencyButtonTarget)} 
+            >
+              <View style={dynamicStyles.radioDot}>
+                
+                {activeAccount === 'Agency' && <View style={dynamicStyles.radioDotActive} />}
+              </View>
+              <Text style={dynamicStyles.accountOptionText}>{agencyOptionLabel}</Text> 
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setAccountModalVisible(false)}>
-              <Text style={dynamicStyles.modalOption}>Profile</Text>
+
+           
+            <TouchableOpacity 
+              style={[
+                dynamicStyles.accountOptionRow,
+                
+                activeAccount === 'owner' && dynamicStyles.accountOptionRowActive
+              ]} 
+              onPress={() => handleAccountSelection('owner')} 
+            >
+              <View style={dynamicStyles.radioDot}>
+               
+                {activeAccount === 'owner' && <View style={dynamicStyles.radioDotActive} />}
+              </View>
+              <Text style={dynamicStyles.accountOptionText}>owner</Text> 
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
+        )}
+      </View>
 
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row} onPress={() => navigation.navigate('EditProfile')}>
@@ -205,24 +262,44 @@ const getStyles = (isDark: boolean) =>
     rowText: { flex: 1, marginLeft: 8, fontSize: 12, color: isDark ? '#fff' : '#000' },
     rightText: { fontSize: 12, color: 'blue' },
     toggleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    modalOverlay: {
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.3)',
-    },
-    modalContent: {
-      margin: 32,
-      backgroundColor: '#fff',
-      borderRightColor: 'red',
-      borderRadius: 8,
-      padding: 16,
-    },
-    modalOption: {
-      fontSize: 12,
+
+    
+    accountOptionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingVertical: 8,
-      borderBottomWidth: 0.5,
-      borderColor: '#ccc',
+      paddingLeft: 20, 
+      borderTopWidth: 0.5,
+      borderTopColor: isDark ? '#333' : '#eee',
     },
+    accountOptionRowActive: { 
+       
+        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    },
+    accountOptionText: {
+      fontSize: 12,
+      color: isDark ? '#fff' : '#000',
+      fontWeight: '600',
+    },
+    radioDot: {
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F9864A',
+      marginRight: 12,
+      marginLeft: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    radioDotActive: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: '#F9864A',
+    },
+    // ------------------------------------------------
+    
     SwitchContainer: {
       flexDirection: 'row',
       alignItems: 'center',

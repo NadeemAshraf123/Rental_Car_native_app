@@ -12,7 +12,7 @@ import SignUpScreen from './src/screens/SignUpScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import AuthyVerificationScreen from './src/screens/AuthyVerificationScreen';
 import NewPasswordScreen from './src/screens/NewPasswordScreen';
-import BottomTabs from './src/bottomtabBar/BottomTabs';
+import BottomTabs from './src/tabnavigation/BottomTabs';
 import CustomDrawerContent from './src/screens/drawer/CustomDrawerContent';
 import EditProfile from './src/screens/profile/EditProfileScreen';
 import ProfileNotificationScreen from './src/screens/profile/ProfileNotificationScreen';
@@ -23,6 +23,18 @@ import TimeSelectingScreen from './src/screens/timeSelectingSecreen/TimeSelectin
 import BookingScreen from './src/screens/bookingScreen/BookingScreen';
 import OurAgencyCarsScreen from './src/screens/agency/OurAgencyCarsScreen';
 import RatingScreen from './src/screens/ratingScreens/RatingScreen';
+import InviteFriendsScreen from './src/screens/ratingScreens/InviteFriendsScreen';
+import SearchFriends from './src/screens/ratingScreens/SearchFriends';
+import SearchInviteFriends from './src/screens/ratingScreens/SearchInviteFriends';
+import HomeScreen from './src/screens/home/HomeScreen';
+import RegistrationScreen from './src/agencySide/RegistrationScreen';
+import CarProfileScreen from './src/agencySide/CarProfileScreen';
+import { createMMKV } from 'react-native-mmkv'
+import EditAgencyProfile from './src/agencySide/EditAgencyProfile';
+import AgencyNotificationScreen from './src/agencySide/AgencyNotificationScreen';
+import AgencyCarDetailScreen from './src/agencySide/AgencyCarDetailScreen';
+export const storage = createMMKV()
+
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -85,6 +97,17 @@ function App(): React.JSX.Element {
           <Stack.Screen name="BookingScreen" component={ BookingScreen  } />
           <Stack.Screen name="OurAgencyCarsScreen" component={ OurAgencyCarsScreen  } />
           <Stack.Screen name="RatingScreen" component={ RatingScreen  } />
+          <Stack.Screen name="InviteFriendsScreen" component={ InviteFriendsScreen  } />
+          <Stack.Screen name="SearchFriends" component={ SearchFriends  } />
+          <Stack.Screen name="SearchInviteFriends" component={ SearchInviteFriends  } />
+          <Stack.Screen name="HomeScreen" component={ HomeScreen  } />
+          <Stack.Screen name="RegistrationScreen" component={ RegistrationScreen  } />
+          <Stack.Screen name="CarProfileScreen" component={ CarProfileScreen  } />
+          <Stack.Screen name="EditAgencyProfile" component={ EditAgencyProfile  } />
+          <Stack.Screen name="AgencyNotificationScreen" component={ AgencyNotificationScreen  } />
+          <Stack.Screen name="AgencyCarDetailScreen" component={ AgencyCarDetailScreen  } />
+
+
 
 
 
