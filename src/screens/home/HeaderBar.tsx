@@ -12,7 +12,7 @@ import { useNavigation, DrawerActions  } from '@react-navigation/native';
 
 
 
-export default function HeaderBar() {
+export default function HeaderBar(  ) {
 
     const navigation = useNavigation();
     const openDrawer = () => {
@@ -51,7 +51,7 @@ export default function HeaderBar() {
             placeholderTextColor="#999"
             style={styles.searchInput}
           />
-          <TouchableOpacity style={styles.filterIcon}>
+          <TouchableOpacity style={styles.filterIcon} onPress={() => navigation.navigate('AgencyCarDetailScreen')}>
             <Icon name="tune" size={20} color="#FF7A00" />
           </TouchableOpacity>
         </View>

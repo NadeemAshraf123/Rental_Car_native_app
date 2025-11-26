@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {createMMKV} from 'react-native-mmkv';
+export const storage = createMMKV();
 import {useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-
+import {AgencyDrawerNavigator} from './src/screens/agency/agencydrawer/AgencyDrawerNavigator';
 import Home from './src/screens/home/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import LoginScreen from './src/screens/LoginScreen';
@@ -28,93 +31,169 @@ import SearchFriends from './src/screens/ratingScreens/SearchFriends';
 import SearchInviteFriends from './src/screens/ratingScreens/SearchInviteFriends';
 import HomeScreen from './src/screens/home/HomeScreen';
 import RegistrationScreen from './src/agencySide/RegistrationScreen';
-import CarProfileScreen from './src/agencySide/CarProfileScreen';
-import { createMMKV } from 'react-native-mmkv'
 import EditAgencyProfile from './src/agencySide/EditAgencyProfile';
 import AgencyNotificationScreen from './src/agencySide/AgencyNotificationScreen';
 import AgencyCarDetailScreen from './src/agencySide/AgencyCarDetailScreen';
-export const storage = createMMKV()
-
+import AgencyProfileScreen from './src/agencySide/AgencyProfileScreen';
+import AgencyTabNavigator from './src/agencySide/agencyTabNavigator/AgencyTabNavigator';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+type UserRole = 'owner' | 'Agency';
 
-function DrawerNavigator() {
+function UserDrawerNavigator() {
   return (
     <Drawer.Navigator
-      screenOptions={{ headerShown: false,
+      screenOptions={{
+        headerShown: false,
         drawerStyle: {
-      width: 240,
-    },
-  }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-
-    >
+          width: 240,
+        },
+      }}
+      drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Tabs" component={BottomTabs} />
     </Drawer.Navigator>
   );
 }
 
-
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  return (
-    <GestureHandlerRootView style={{flex: 1,}}>
-      <NavigationContainer>
+  const [userRole, setUserRole] = useState<UserRole>('userRole');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const initialRole = storage.getString('userRole') as UserRole;
+    if (initialRole) {
+      setUserRole(initialRole);
+    }
+    setIsLoading(false);
+
+    const subscription = storage.addOnValueChangedListener((key: any) => {
+      const newRole = storage.getString('userRole') as UserRole;
+      if (newRole) {
+        setUserRole(newRole);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#F9864A" />
+      </View>
+    );
+  }
+
+  const RoleBasedRootNavigator = () => {
+    if (userRole === 'Agency') {
+      return (
         <Stack.Navigator
-          initialRouteName="Landing"
+          initialRouteName="AgencyDrawer"
           screenOptions={{
             headerShown: false,
             contentStyle: {backgroundColor: isDarkMode ? '#000' : '#fff'},
           }}>
-          <Stack.Screen name="Landing" component={LandingScreen} />
-          <Stack.Screen name="Home" component={DrawerNavigator} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-
-          <Stack.Screen name="EditProfile" component={ EditProfile  } />
-          <Stack.Screen name="ProfileNotificationScreen" component={ ProfileNotificationScreen  } />
-          <Stack.Screen name="LanguageScreen" component={ LanguageScreen  } />
-          <Stack.Screen name="PrivacyPolicyScreen" component={ PrivacyPolicyScreen  } />
-
+          <Stack.Screen name="AgencyDrawer" component={AgencyDrawerNavigator} />
 
           <Stack.Screen
-            name="ForgotPasswordScreen"
-            component={ForgotPasswordScreen}
+            name="RegistrationScreen"
+            component={RegistrationScreen}
           />
           <Stack.Screen
-            name="AuthyVerificationScreen"
-            component={AuthyVerificationScreen}
+            name="EditAgencyProfile"
+            component={EditAgencyProfile}
           />
           <Stack.Screen
-            name="NewPasswordScreen"
-            component={NewPasswordScreen}
+            name="AgencyNotificationScreen"
+            component={AgencyNotificationScreen}
           />
-
-          <Stack.Screen name="CarsDetailScreen" component={ CarsDetailScreen  } />
-          <Stack.Screen name="TimeSelectingScreen" component={ TimeSelectingScreen  } />
-          <Stack.Screen name="BookingScreen" component={ BookingScreen  } />
-          <Stack.Screen name="OurAgencyCarsScreen" component={ OurAgencyCarsScreen  } />
-          <Stack.Screen name="RatingScreen" component={ RatingScreen  } />
-          <Stack.Screen name="InviteFriendsScreen" component={ InviteFriendsScreen  } />
-          <Stack.Screen name="SearchFriends" component={ SearchFriends  } />
-          <Stack.Screen name="SearchInviteFriends" component={ SearchInviteFriends  } />
-          <Stack.Screen name="HomeScreen" component={ HomeScreen  } />
-          <Stack.Screen name="RegistrationScreen" component={ RegistrationScreen  } />
-          <Stack.Screen name="CarProfileScreen" component={ CarProfileScreen  } />
-          <Stack.Screen name="EditAgencyProfile" component={ EditAgencyProfile  } />
-          <Stack.Screen name="AgencyNotificationScreen" component={ AgencyNotificationScreen  } />
-          <Stack.Screen name="AgencyCarDetailScreen" component={ AgencyCarDetailScreen  } />
-
-
-
-
-
+          <Stack.Screen
+            name="AgencyCarDetailScreen"
+            component={AgencyCarDetailScreen}
+          />
+          <Stack.Screen
+            name="PrivacyPolicyScreen"
+            component={PrivacyPolicyScreen}
+          />
         </Stack.Navigator>
-      </NavigationContainer>
+      );
+    }
+
+    return (
+      <Stack.Navigator
+        initialRouteName="Landing"
+        screenOptions={{
+          headerShown: false,
+          contentStyle: {backgroundColor: isDarkMode ? '#000' : '#fff'},
+        }}>
+
+        <Stack.Screen name="Landing" component={LandingScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen
+          name="ForgotPasswordScreen"
+          component={ForgotPasswordScreen}
+        />
+        <Stack.Screen
+          name="AuthyVerificationScreen"
+          component={AuthyVerificationScreen}
+        />
+        <Stack.Screen name="NewPasswordScreen" component={NewPasswordScreen} />
+
+        <Stack.Screen name="Home" component={UserDrawerNavigator} />
+
+        <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen
+          name="ProfileNotificationScreen"
+          component={ProfileNotificationScreen}
+        />
+        <Stack.Screen name="LanguageScreen" component={LanguageScreen} />
+        <Stack.Screen
+          name="PrivacyPolicyScreen"
+          component={PrivacyPolicyScreen}
+        />
+        <Stack.Screen name="CarsDetailScreen" component={CarsDetailScreen} />
+        <Stack.Screen
+          name="TimeSelectingScreen"
+          component={TimeSelectingScreen}
+        />
+        <Stack.Screen name="BookingScreen" component={BookingScreen} />
+        <Stack.Screen
+          name="OurAgencyCarsScreen"
+          component={OurAgencyCarsScreen}
+        />
+        <Stack.Screen name="RatingScreen" component={RatingScreen} />
+        <Stack.Screen
+          name="InviteFriendsScreen"
+          component={InviteFriendsScreen}
+        />
+        <Stack.Screen name="SearchFriends" component={SearchFriends} />
+        <Stack.Screen
+          name="SearchInviteFriends"
+          component={SearchInviteFriends}
+        />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      </Stack.Navigator>
+    );
+  };
+
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+      <NavigationContainer>{RoleBasedRootNavigator()}</NavigationContainer>
     </GestureHandlerRootView>
   );
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+});

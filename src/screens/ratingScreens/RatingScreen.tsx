@@ -61,14 +61,13 @@ const RatingScreen = ( {navigation} ) => {
           style={styles.backgroundImage2}
           resizeMode="contain" 
         />
-        {/* <View style={styles.largeShape} />  */}
-        {/* <View style={styles.smallShape} />  */}
+        
 
       </View>
 
     
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('CustomDrawerContent')} style={styles.headerArrow}>
+        <TouchableOpacity style={styles.headerArrow}>
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Rating</Text>
@@ -226,7 +225,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 1,
     zIndex: 0,
     marginTop: 90,
   },

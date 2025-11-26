@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, SafeAreaView, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -38,7 +39,7 @@ const CarCard = ({ carName, imageUri, features }) => {
 };
 
 
-export default function CarProfileScreen( {navigation} ) {
+export default function AgencyProfileScreen( {navigation} ) {
   
   const carData = [
     { 
@@ -101,7 +102,7 @@ export default function CarProfileScreen( {navigation} ) {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
-    <TouchableOpacity onPress={() => navigation.navigate('EditAgencyProfile')}>
+    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
         <Feather name="menu" size={28} color="#F9864A" />
         </TouchableOpacity>        
         <Text style={styles.title}>OUR PROFILE</Text>

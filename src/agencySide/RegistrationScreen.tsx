@@ -50,7 +50,7 @@ export default function RegistrationScreen( {navigation} ) {
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('CarProfileScreen')} style={styles.submitButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('AgencyProfileScreen')} style={styles.submitButton}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </View>

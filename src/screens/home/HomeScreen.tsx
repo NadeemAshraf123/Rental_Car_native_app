@@ -36,13 +36,9 @@ export default function HomeScreen({ navigation }: any) {
       </View>
       </ScrollView>
 
-     
-
     </View>
   );
 }
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -53,7 +49,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     position: 'relative',
-  
   },
 
   content: {
@@ -66,7 +61,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  sectionTitle: {
+  sectionTitle: { 
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FF7A00',
@@ -76,9 +71,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     flexDirection: 'row',
     gap: 50,
-
-
-
   },
   btn: {
     backgroundColor: '#F9864A',

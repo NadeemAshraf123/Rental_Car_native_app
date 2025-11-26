@@ -15,12 +15,6 @@ import { storage } from '../../App';
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
-  // const userType= storage.getString("userRole")
-  // console.log("userType", userType);
-  // useEffect(()=>{
-    
-
-  // },[storage])
 
   return (
     <Tab.Navigator

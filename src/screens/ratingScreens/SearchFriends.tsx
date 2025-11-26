@@ -87,11 +87,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 20,
   },
-  listContainer: { paddingBottom: 20 },
+  listContainer: {
+     paddingBottom: 20,
+    
+   
+    },
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
+    
+
   },
   avatar: {
     width: 44,
@@ -99,6 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     backgroundColor: '#ccc',
     marginRight: 12,
+    
   },
   name: {
     flex: 1,
