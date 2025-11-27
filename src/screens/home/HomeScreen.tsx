@@ -1,7 +1,13 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground , Text, TouchableOpacity } from 'react-native';
 import HeaderBar from './HeaderBar';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
+import ContentPanel from './ContentPanel';
+
+const MAP_HEIGHT = 350;
+
+const SPACER_HEIGHT = 300;
+
 
 export default function HomeScreen({ navigation }: any) {
   return (
@@ -14,28 +20,15 @@ export default function HomeScreen({ navigation }: any) {
         <HeaderBar />
       </ImageBackground>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.sectionTitleWrapper}>
-          <Text style={styles.sectionTitle}>GO</Text>
-        </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.mapSpacer}  />
 
-        <View style={styles.CarBtn}>
+        <ContentPanel />
 
-         <TouchableOpacity onPress={() =>  navigation.navigate('CarsDetailScreen')} style={styles.btn}>
-        <Text>Cars</Text>
-      </TouchableOpacity>
-        
-
-         <TouchableOpacity  onPress={() =>  navigation.navigate('OurAgencyCarsScreen')}  style={styles.btn}>
-        <Text>Agencies</Text>
-      </TouchableOpacity>
-
-         <TouchableOpacity onPress={() =>  navigation.navigate('RegistrationScreen')} style={styles.btn}>
-        <Text>Famous</Text>
-      </TouchableOpacity>
-      </View>
       </ScrollView>
-
     </View>
   );
 }
@@ -47,9 +40,19 @@ const styles = StyleSheet.create({
 
   mapBackground: {
     width: '100%',
-    height: 250,
-    position: 'relative',
+    height: MAP_HEIGHT,
+    position: 'absolute',
+    top: 0,
+    zIndex: 1,
   },
+  mapSpacer: {
+    height: SPACER_HEIGHT,
+  },
+  scrollContentContainer: {
+    flexGrow: 1, 
+    zIndex: 2,
+  },
+
 
   content: {
     paddingBottom: 24,

@@ -51,19 +51,10 @@ const BottomTabs = () => {
           );
         },
       })}>
-      {/* {usertype === 'user' ? ( */}
-        {/* <> */}
+    
           <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="Notifications" component={NotificationScreen} />
           <Tab.Screen name="Send" component={SendScreen} />
-        {/* </> */}
-      {/* ) : (
-        <>
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Notifications" component={NotificationScreen} />
-          <Tab.Screen name="Send" component={SendScreen} />
-        </>
-      )} */}
     </Tab.Navigator>
   );
 };
@@ -84,7 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     top: -25,
 
-    elevation: 20,
+    elevation: 0,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -106,7 +97,7 @@ const styles = StyleSheet.create({
   activeBgImage: {
     resizeMode: 'contain',
     width: 100,
-    height: 50,
+    height: 55,
     left: -25,
   },
   iconBgCircle: {
@@ -119,3 +110,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+
+// see this ui image and we will be rendered this screen in main home screen as shown in image now the flow is completed , now tell me what you need moree to know and how you have understood the flow and which component if you want to see the ccode ?

@@ -162,14 +162,15 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   stackImage: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 8,
     backgroundColor: 'white',
   },
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 10,
+    
   },
 
   card: {
@@ -189,7 +190,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '900',
     color: '#333',
-    // marginTop: 18,
     textTransform: 'lowercase',
     marginLeft: 40,
   },
