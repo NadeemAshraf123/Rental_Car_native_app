@@ -19,7 +19,6 @@ const CustomDrawerContent = () => {
   const [themeLight, setThemeLight] = useState(true);
   const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState(false); 
   
-  // State to track which account is currently active (Owner is 'owner', Agency is 'Agency')
   const [activeAccount, setActiveAccount] = useState('owner'); 
   
   const scheme = useColorScheme();

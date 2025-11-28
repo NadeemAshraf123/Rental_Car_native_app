@@ -1,14 +1,40 @@
-import {StyleSheet, Text, View, Image, Pressable} from 'react-native';
+import {StyleSheet, Text, View, Image, Pressable,Alert} from 'react-native';
 import React, {useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/authSlice';
+
 import {SafeAreaView} from 'react-native';
 import AppInput from '../common/AppInput';
 import AppButton from '../common/AppButton';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({ navigation, ...TextInputProps}) => {
+
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   console.log('fullName', fullName);
+  const dispatch = useDispatch();
+
+
+  const handleLogin = () => {
+    if (!fullName || !password) {
+      Alert.alert('Error', 'Please enter both full name and password');
+      return ;
+    }
+  dispatch(login({ fullName, password }))
+    .unwrap()
+    .then((user) => {
+      if (user) {
+        navigation.navigate('Home');
+      } else {
+        navigation.navigate('SignUpScreen');
+      }
+    })
+    .catch((err) => {
+      Alert.alert('Login Failed', 'User not found. Please sign up.');
+      navigation.navigate('SignUpScreen');
+    })
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,7 +100,7 @@ const LoginScreen = ({ navigation, ...TextInputProps}) => {
         <View style={styles.signInBtnContainer}>
           <AppButton
             label="Sign In"
-            onPress={() => navigation.navigate('Home')}
+            onPress={handleLogin}
             variant="primary"
           />
         </View>

@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {createMMKV} from 'react-native-mmkv';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store';
+
 export const storage = createMMKV();
 import {useColorScheme} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -36,6 +39,7 @@ import AgencyNotificationScreen from './src/agencySide/AgencyNotificationScreen'
 import AgencyCarDetailScreen from './src/agencySide/AgencyCarDetailScreen';
 import AgencyProfileScreen from './src/agencySide/AgencyProfileScreen';
 import AgencyTabNavigator from './src/agencySide/agencyTabNavigator/AgencyTabNavigator';
+import CarsDetailView from './src/screens/home/CarsDetailView';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -57,8 +61,8 @@ function UserDrawerNavigator() {
 }
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
 
+  const isDarkMode = useColorScheme() === 'dark';
   const [userRole, setUserRole] = useState<UserRole>('userRole');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -123,6 +127,7 @@ function App(): React.JSX.Element {
     }
 
     return (
+
       <Stack.Navigator
         initialRouteName="Landing"
         screenOptions={{
@@ -176,14 +181,18 @@ function App(): React.JSX.Element {
           component={SearchInviteFriends}
         />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        
       </Stack.Navigator>
+
     );
   };
 
   return (
+      <Provider store={store}>
     <GestureHandlerRootView style={{flex: 1}}>
       <NavigationContainer>{RoleBasedRootNavigator()}</NavigationContainer>
     </GestureHandlerRootView>
+    </Provider>
   );
 }
 

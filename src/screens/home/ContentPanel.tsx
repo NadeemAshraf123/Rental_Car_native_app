@@ -5,19 +5,23 @@ import AgenciesDetailView from './AgenciesDetailView';
 import FamousDetailView from './FamousDetailView'; 
 
 
+interface ContentPanelProps { 
+    navigation: any ;
+}
+
 type ActiveTab = 'Cars' | 'Agencies' | 'Famous';
 
-const ContentPanel = () => {
+const ContentPanel = ({ navigation }: ContentPanelProps) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('Cars');
 
   const renderDetailView = () => {
     switch (activeTab) {
       case 'Cars':
-        return <CarsDetailView />;
+        return <CarsDetailView navigation={navigation} />;
       case 'Agencies':
-        return <AgenciesDetailView />;
+        return <AgenciesDetailView navigation={navigation} />;
       case 'Famous':
-        return <FamousDetailView />;
+        return <FamousDetailView  />;
       default:
         return null;
     }

@@ -1,11 +1,35 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, Image, SafeAreaView} from 'react-native';
+import {StyleSheet, Text, View, Image, SafeAreaView, Alert} from 'react-native';
 import {TextInput} from 'react-native-paper';
+import { findUserByEmail } from '../api/api';
 import AppInput from '../common/AppInput';
 import AppButton from '../common/AppButton';
 
 const ForgotPasswordScreen = ({navigation}) => {
+
   const [email, setEmail] = useState('');
+
+ const handleEmailSubmit = () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email');
+      return;
+    }
+
+    findUserByEmail(email)
+      .then((user) => {
+        if (user) {
+          navigation.navigate('NewPasswordScreen', { userId: user.id });
+        } else {
+          Alert.alert('Email not found', 'Please check and try again');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Error', 'Something went wrong');
+      });
+  };
+
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,7 +71,7 @@ const ForgotPasswordScreen = ({navigation}) => {
       <View style={styles.submitBtnContainer}>
         <AppButton
           label="Submit"
-          onPress={() => navigation.navigate('AuthyVerificationScreen')}
+          onPress={handleEmailSubmit}
           variant="primary"
         />
       </View>

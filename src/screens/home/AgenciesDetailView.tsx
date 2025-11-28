@@ -13,7 +13,7 @@ const AGENCY_ITEMS = [
     { id: 5, name: 'Autos VIP', image: require('../../assets/homeCars/homeAgenciesImages/agency1.png'), rating: 4.9 },
 ];
 
-const AgenciesDetailView = () => {
+const AgenciesDetailView = ({ navigation }) => {
     const [activeCategory, setActiveCategory] = useState('All');
 
     return (

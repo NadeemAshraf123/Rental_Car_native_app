@@ -7,10 +7,14 @@ import {
   Pressable,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import AppInput from '../common/AppInput';
 import AppButton from '../common/AppButton';
 import Icon from 'react-native-vector-icons/Feather';
+
+import {useDispatch} from 'react-redux';
+import {register} from '../redux/authSlice';
 
 const SignUpScreen = ({navigation}) => {
   const [fullName, setFullName] = useState('');
@@ -20,6 +24,43 @@ const SignUpScreen = ({navigation}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const handleRegister = () => {
+    if (!fullName || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'All feilds are required');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Password do not match');
+      return;
+    }
+
+    if (!agreeTerms) {
+      Alert.alert('Error', 'You must agree to the Terms and Conditions');
+      return;
+    }
+
+    const userData = {fullName, email, password};
+
+    dispatch(register(userData))
+      .unwrap()
+      .then(() => {
+        setFullName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setAgreeTerms(false);
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+
+        navigation.navigate('Home');
+      })
+      .catch(err => {
+        Alert.alert('Registration Failed', err.message || 'Please try again');
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,12 +79,10 @@ const SignUpScreen = ({navigation}) => {
 
       <Text style={styles.heading}>Create Account</Text>
 
-
       <Image
         source={require('../assets/letsGo/signUpImage.jpg')}
         style={styles.signUpImage}
       />
-
 
       <View style={styles.inputContainer}>
         <AppInput
@@ -95,11 +134,7 @@ const SignUpScreen = ({navigation}) => {
       </View>
 
       <View style={styles.signUpBtnContainer}>
-        <AppButton
-          label="Sign Up"
-          onPress={() => console.log('Sign Up')}
-          variant="primary"
-        />
+        <AppButton label="Sign Up" onPress={handleRegister} variant="primary" />
       </View>
 
       <View style={styles.dividerContainer}>

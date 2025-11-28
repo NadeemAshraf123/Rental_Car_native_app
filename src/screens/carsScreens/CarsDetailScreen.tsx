@@ -13,9 +13,6 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 
 const CarsDetailScreen = ( {navigation} ) => {
 
-  
-
-
   const carDetails = {
     name: 'AUDI',
     rating: 4.9,
@@ -65,7 +62,7 @@ const CarsDetailScreen = ( {navigation} ) => {
   const renterDetails = {
     name: 'Deficar',
     role: 'Renter',
-    image: 'https://via.placeholder.com/150/0000FF/808080?Text=D',
+    image: require('../../assets/avatar/avatar1.jpg'),
   };
 
   const FeatureBox = ({ iconName, title, subtitle }) => (
@@ -101,7 +98,7 @@ const CarsDetailScreen = ( {navigation} ) => {
             <Icon name="chevron-back" size={24} color="#000" />
           </TouchableOpacity>
           <Image
-            source={{ uri: 'https://via.placeholder.com/500x200?text=Audi+Car+Image' }}
+            source={require('../../assets/avatar/Car4.png')}
             style={styles.carImage}
             resizeMode="contain"
           />
@@ -166,7 +163,7 @@ const CarsDetailScreen = ( {navigation} ) => {
 
 
         <View style={styles.renterContainer}>
-          <Image source={{ uri: renterDetails.image }} style={styles.renterImage} />
+          <Image source={renterDetails.image } style={styles.renterImage} />
           <View style={styles.renterDetails}>
             <Text style={styles.renterName}>{renterDetails.name}</Text>
             <Text style={styles.renterRole}>{renterDetails.role}</Text>

@@ -5,19 +5,51 @@ import {
   View,
   Image,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import AppInput from '../common/AppInput';
 import AppButton from '../common/AppButton';
+import { updateUserPassword } from '../api/api';
 
-const NewPasswordScreen = ({ navigation }) => {
+const NewPasswordScreen = ({ route, navigation }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+
+
+  const handlePasswordReset = () => {
+  const { userId } = route.params || {};
+  if (!userId) {
+    Alert.alert('Error', 'No user found for password reset');
+    navigation.navigate('ForgotPasswordScreen');
+    return;
+  }
+
+  if (!newPassword || !confirmPassword) {
+    Alert.alert('Error', 'Please fill both fields');
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    Alert.alert('Error', 'Passwords do not match');
+    return;
+  }
+
+  updateUserPassword(userId, newPassword)
+    .then(() => {
+      Alert.alert('Success', 'Password updated');
+      navigation.navigate('LoginScreen');
+    })
+    .catch(() => {
+      Alert.alert('Error', 'Could not update password');
+    });
+};
+
+
   return (
     <SafeAreaView style={styles.container}>
-    
       <View style={styles.statusBar}>
         <Text style={styles.timeText}>09:41</Text>
         <Image
@@ -26,20 +58,16 @@ const NewPasswordScreen = ({ navigation }) => {
         />
       </View>
 
-    
       <Image
         source={require('../assets/letsGo/newpasswordImage.jpg')}
         style={styles.illustration}
       />
 
       <Text style={styles.heading}>Set new password</Text>
-
-    
       <Text style={styles.subText}>
         Enter your new password below and check the hint while setting it.
       </Text>
 
-      
       <View style={styles.inputContainer}>
         <AppInput
           placeholder="Input password here"
@@ -52,7 +80,7 @@ const NewPasswordScreen = ({ navigation }) => {
           onTogglePress={() => setShowNewPassword(!showNewPassword)}
         />
         <AppInput
-          placeholder="put here"
+          placeholder="Confirm password"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry={!showConfirmPassword}
@@ -63,15 +91,20 @@ const NewPasswordScreen = ({ navigation }) => {
         />
       </View>
 
-    
       <View style={styles.submitBtnContainer}>
-        <AppButton label="Submit password" onPress={() => navigation.navigate('LoginScreen')} variant="primary" />
+      
+        <AppButton
+          label="Submit password"
+          onPress={handlePasswordReset}
+          variant="primary"
+        />
       </View>
     </SafeAreaView>
   );
 };
 
 export default NewPasswordScreen;
+
 
 const styles = StyleSheet.create({
   container: {
