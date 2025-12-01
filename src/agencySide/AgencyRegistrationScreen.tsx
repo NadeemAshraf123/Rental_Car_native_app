@@ -1,16 +1,75 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import React, {useState} from 'react';
+import axios from 'axios';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch} from 'react-redux';
+import { createAgency } from '../redux/agencycarSlice/AgencySlice';
 
-export default function RegistrationScreen( {navigation} ) {
+const API = axios.create({ baseURL: 'http://192.168.0.47:3000' });
+
+export default function AgencyRegistrationScreen({navigation}) {
+  const dispatch = useDispatch();
+
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
+
+const handleSubmit = async () => {
+  if (!name || !phone || !address) {
+    Alert.alert('Error', 'Please fill all fields');
+    return;
+  }
+
+  
+  const res = await API.get(
+    `/agencies?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`
+  );
+  const existingAgency = res.data[0];
+
+  if (existingAgency) {
+    
+    navigation.replace('AgencyDrawer', {
+      screen: 'AgencyProfileScreen',
+      params: { agencyId: existingAgency.id },
+    });
+    return;
+  }
+
+  
+  const newAgency = { name, phone, address };
+  const resultAction = await dispatch(createAgency(newAgency));
+
+  if (createAgency.fulfilled.match(resultAction)) {
+    const createdAgency = resultAction.payload;
+
+    setName('');
+    setPhone('');
+    setAddress('');
+
+    navigation.replace('AgencyDrawer', {
+      screen: 'AgencyProfileScreen',
+      params: { agencyId: createdAgency.id },
+    });
+  }
+};
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-
-
-        <Image 
-          source={require('../assets/avatar/emoji.png')} 
+        <Image
+          source={require('../assets/avatar/emoji.png')}
           style={styles.headerImage}
         />
         <View style={styles.logoContainer}>
@@ -20,14 +79,19 @@ export default function RegistrationScreen( {navigation} ) {
       </View>
 
       <View style={styles.formContainer}>
-
         <View style={styles.inputGroup}>
-
-          <MaterialCommunityIcon name="account" size={24} color="#666" style={styles.inputIcon} />
+          <MaterialCommunityIcon
+            name="account"
+            size={24}
+            color="#666"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="agency name"
             placeholderTextColor="#999"
+            value={name}
+            onChangeText={setName}
           />
         </View>
 
@@ -38,19 +102,28 @@ export default function RegistrationScreen( {navigation} ) {
             placeholder="phone number"
             placeholderTextColor="#999"
             keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Icon name="map-pin" size={24} color="#666" style={styles.inputIcon} />
+          <Icon
+            name="map-pin"
+            size={24}
+            color="#666"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="address"
             placeholderTextColor="#999"
+            value={address}
+            onChangeText={setAddress}
           />
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('AgencyProfileScreen')} style={styles.submitButton}>
+        <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </View>
@@ -59,8 +132,6 @@ export default function RegistrationScreen( {navigation} ) {
     </SafeAreaView>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -72,14 +143,14 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 40,
     alignItems: 'center',
-    borderBottomLeftRadius: 150, 
-    borderBottomRightRadius: 150, 
-    overflow: 'hidden', 
+    borderBottomLeftRadius: 150,
+    borderBottomRightRadius: 150,
+    overflow: 'hidden',
     position: 'relative',
   },
   headerImage: {
-    width: 250, 
-    height: 180, 
+    width: 250,
+    height: 180,
     resizeMode: 'contain',
     position: 'absolute',
     top: 20,
@@ -99,11 +170,11 @@ const styles = StyleSheet.create({
   logoTextSmall: {
     fontSize: 18,
     color: '#fff',
-    marginTop: -10, 
+    marginTop: -10,
   },
   formContainer: {
     paddingHorizontal: 30,
-    marginTop: 50, 
+    marginTop: 50,
   },
   inputGroup: {
     flexDirection: 'row',
@@ -112,11 +183,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 13,
-    height: 55, 
+    height: 55,
     borderWidth: 0.5,
-    
+
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 0,
@@ -130,7 +201,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   submitButton: {
-    backgroundColor: '#FF7F50', 
+    backgroundColor: '#FF7F50',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
@@ -143,12 +214,12 @@ const styles = StyleSheet.create({
   },
   footerCircle: {
     position: 'absolute',
-    bottom: -100, 
-    right: -100, 
+    bottom: -100,
+    right: -100,
     width: 200,
     height: 190,
     borderRadius: 100,
-    backgroundColor: '#FF7F50', 
-    opacity: 0.9, 
+    backgroundColor: '#FF7F50',
+    opacity: 0.9,
   },
 });

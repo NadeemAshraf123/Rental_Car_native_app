@@ -29,3 +29,28 @@ export const updateUserPassword = async (id, newPassword) => {
   return res.data;
 };
 
+export const fetchAgencyCars = async (agencyId) => {
+  const res = await API.get(`/agencyCars?agencyId=${agencyId}`);
+  return res.data;
+};
+
+export const addAgencyCar = async (agencyId, carData) => {
+  const res = await API.post('/agencyCars', { ...carData, agencyId });
+  return res.data;
+};
+
+
+
+export const addAgency = async (agencyData) => {
+    const res = await API.post('/agencies', agencyData);
+    return res.data;
+};
+export const fetchAgencyById = async (id) => {
+  const res = await API.get(`/agencies/${id}`);
+  return res.data;
+};
+
+
+
+
+

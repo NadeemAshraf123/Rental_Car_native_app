@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,22 +27,24 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
   const handleAccountSelection = (targetAccount: 'owner' | 'Agency') => {
     setActiveAccount(targetAccount);
     setIsAccountOptionsOpen(false);
-
     storage.set('userRole', targetAccount);
 
     if (targetAccount === 'Agency') {
       navigation.replace('AgencyDrawer'); 
     } else {
-      navigation.replace('HomeScreen');
+      navigation.replace('Home');
     }
   };
-
-  const agencyOptionLabel = activeAccount === 'owner' ? 'Agency' : 'User';
-  const agencyButtonTarget = activeAccount === 'owner' ? 'Agency' : 'owner';
+  useEffect(() => {
+    const storedRole = storage.getString('userRole') as 'owner' | 'Agency';
+    if (storedRole) {
+      setActiveAccount(storedRole);
+    }
+  }, []);
+  
 
   return (
     <ScrollView style={dynamicStyles.container}>
-      
       <View style={dynamicStyles.profileContainer}>
         <Image
           source={require('../../../assets/agencyreistration/profile1.png')}
@@ -53,7 +55,6 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      
       <View style={dynamicStyles.homeContainer}>
         <Text style={dynamicStyles.homeText}>Home</Text>
         <Image
@@ -61,10 +62,11 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
           style={dynamicStyles.iconImage}
         />
       </View>
+
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => setIsAccountOptionsOpen((prev) => !prev)}
+          onPress={() => setIsAccountOptionsOpen(prev => !prev)}
         >
           <View style={dynamicStyles.SwitchContainer}>
             <Image
@@ -89,12 +91,12 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
                 dynamicStyles.accountOptionRow,
                 activeAccount === 'Agency' && dynamicStyles.accountOptionRowActive,
               ]}
-              onPress={() => handleAccountSelection(agencyButtonTarget)}
+              onPress={() => handleAccountSelection('Agency')}
             >
               <View style={dynamicStyles.radioDot}>
                 {activeAccount === 'Agency' && <View style={dynamicStyles.radioDotActive} />}
               </View>
-              <Text style={dynamicStyles.accountOptionText}>{agencyOptionLabel}</Text>
+              <Text style={dynamicStyles.accountOptionText}>Agency</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -107,13 +109,13 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
               <View style={dynamicStyles.radioDot}>
                 {activeAccount === 'owner' && <View style={dynamicStyles.radioDotActive} />}
               </View>
-              <Text style={dynamicStyles.accountOptionText}>Owner</Text>
+              <Text style={dynamicStyles.accountOptionText}>User</Text> {/* ✅ changed from Owner */}
             </TouchableOpacity>
           </View>
         )}
       </View>
 
-     
+      {/* Remaining cards unchanged */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
@@ -151,7 +153,6 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-     
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
           <Icon name="security" size={15} color={isDark ? '#fff' : '#000'} />
@@ -165,7 +166,7 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
             <Icon name="wb-sunny" size={15} color={themeLight ? '#FFD700' : '#ccc'} />
             <Switch
               value={themeLight}
-              onValueChange={() => setThemeLight((prev) => !prev)}
+              onValueChange={() => setThemeLight(prev => !prev)}
               trackColor={{ false: '#fff', true: '#F9864A' }}
             />
             <Icon name="nights-stay" size={15} color={!themeLight ? '#333' : '#ccc'} />
@@ -173,7 +174,6 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
         </View>
       </View>
 
-      
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
           <Icon name="help-outline" size={15} color={isDark ? '#fff' : '#000'} />
@@ -194,7 +194,6 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      
       <TouchableOpacity
         style={dynamicStyles.logoutButton}
         onPress={() => navigation.navigate('RatingScreen')}
@@ -207,6 +206,7 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
 };
 
 export default AgencyDrawer;
+
 
 
 const getStyles = (isDark: boolean) =>

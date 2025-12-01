@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {createMMKV} from 'react-native-mmkv';
-import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 
 export const storage = createMMKV();
 import {useColorScheme} from 'react-native';
@@ -19,7 +19,7 @@ import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import AuthyVerificationScreen from './src/screens/AuthyVerificationScreen';
 import NewPasswordScreen from './src/screens/NewPasswordScreen';
 import BottomTabs from './src/tabnavigation/BottomTabs';
-import CustomDrawerContent from './src/screens/drawer/CustomDrawerContent';
+import UserDrawer from './src/screens/userdrawer/UserDrawer';
 import EditProfile from './src/screens/profile/EditProfileScreen';
 import ProfileNotificationScreen from './src/screens/profile/ProfileNotificationScreen';
 import LanguageScreen from './src/screens/profile/LanguageScreen';
@@ -33,13 +33,14 @@ import InviteFriendsScreen from './src/screens/ratingScreens/InviteFriendsScreen
 import SearchFriends from './src/screens/ratingScreens/SearchFriends';
 import SearchInviteFriends from './src/screens/ratingScreens/SearchInviteFriends';
 import HomeScreen from './src/screens/home/HomeScreen';
-import RegistrationScreen from './src/agencySide/RegistrationScreen';
 import EditAgencyProfile from './src/agencySide/EditAgencyProfile';
 import AgencyNotificationScreen from './src/agencySide/AgencyNotificationScreen';
 import AgencyCarDetailScreen from './src/agencySide/AgencyCarDetailScreen';
 import AgencyProfileScreen from './src/agencySide/AgencyProfileScreen';
 import AgencyTabNavigator from './src/agencySide/agencyTabNavigator/AgencyTabNavigator';
 import CarsDetailView from './src/screens/home/CarsDetailView';
+import AddNewCarScreen from './src/agencySide/addagencycars/AddNewCarScreen';
+import AgencyRegistrationScreen from './src/agencySide/AgencyRegistrationScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -54,14 +55,13 @@ function UserDrawerNavigator() {
           width: 240,
         },
       }}
-      drawerContent={props => <CustomDrawerContent {...props} />}>
+      drawerContent={props => <UserDrawer {...props} />}>
       <Drawer.Screen name="Tabs" component={BottomTabs} />
     </Drawer.Navigator>
   );
 }
 
 function App(): React.JSX.Element {
-
   const isDarkMode = useColorScheme() === 'dark';
   const [userRole, setUserRole] = useState<UserRole>('userRole');
   const [isLoading, setIsLoading] = useState(true);
@@ -95,17 +95,17 @@ function App(): React.JSX.Element {
     if (userRole === 'Agency') {
       return (
         <Stack.Navigator
-          initialRouteName="AgencyDrawer"
+          initialRouteName="AgencyRegistrationScreen"
           screenOptions={{
             headerShown: false,
             contentStyle: {backgroundColor: isDarkMode ? '#000' : '#fff'},
           }}>
+          <Stack.Screen
+            name="AgencyRegistrationScreen"
+            component={AgencyRegistrationScreen}
+          />
           <Stack.Screen name="AgencyDrawer" component={AgencyDrawerNavigator} />
 
-          <Stack.Screen
-            name="RegistrationScreen"
-            component={RegistrationScreen}
-          />
           <Stack.Screen
             name="EditAgencyProfile"
             component={EditAgencyProfile}
@@ -122,19 +122,22 @@ function App(): React.JSX.Element {
             name="PrivacyPolicyScreen"
             component={PrivacyPolicyScreen}
           />
+          <Stack.Screen
+            name="AddNewCarScreen"
+            component={AddNewCarScreen}
+            options={{title: 'Add New Car'}}
+          />
         </Stack.Navigator>
       );
     }
 
     return (
-
       <Stack.Navigator
         initialRouteName="Landing"
         screenOptions={{
           headerShown: false,
           contentStyle: {backgroundColor: isDarkMode ? '#000' : '#fff'},
         }}>
-
         <Stack.Screen name="Landing" component={LandingScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
@@ -181,17 +184,15 @@ function App(): React.JSX.Element {
           component={SearchInviteFriends}
         />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        
       </Stack.Navigator>
-
     );
   };
 
   return (
-      <Provider store={store}>
-    <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer>{RoleBasedRootNavigator()}</NavigationContainer>
-    </GestureHandlerRootView>
+    <Provider store={store}>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <NavigationContainer>{RoleBasedRootNavigator()}</NavigationContainer>
+      </GestureHandlerRootView>
     </Provider>
   );
 }
