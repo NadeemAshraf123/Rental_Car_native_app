@@ -7,6 +7,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     agencyCars: agencyCarReducer,
+    agency: agencyCarReducer,
 
   },
 });

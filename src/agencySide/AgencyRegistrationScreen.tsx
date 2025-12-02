@@ -9,7 +9,11 @@ import {
   Image,
   SafeAreaView,
   Alert,
+  Platform,
+  KeyboardAvoidingView,  // ✅ NEW (moved here)
+  ScrollView,            // ✅ NEW (moved here)
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch} from 'react-redux';
@@ -24,112 +28,139 @@ export default function AgencyRegistrationScreen({navigation}) {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
+ const handleSubmit = async () => {
+    if (!name || !phone || !address) {
+      Alert.alert('Error', 'Please fill all fields');
+      return;
+    }
 
-const handleSubmit = async () => {
-  if (!name || !phone || !address) {
-    Alert.alert('Error', 'Please fill all fields');
-    return;
-  }
+    try {
+      // --- 1. Check for Existing Agency ---
+      const res = await API.get(`/agencies?name=${encodeURIComponent(name)}`);
+      const existingAgency = res.data[0];
 
-  
-  const res = await API.get(
-    `/agencies?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`
-  );
-  const existingAgency = res.data[0];
+      if (existingAgency) {
+        navigation.replace('AgencyDrawer', {
+          screen: 'AgencyProfileScreen',
+          params: { agencyId: existingAgency.id },
+        });
+        return;
+      }
 
-  if (existingAgency) {
-    
-    navigation.replace('AgencyDrawer', {
-      screen: 'AgencyProfileScreen',
-      params: { agencyId: existingAgency.id },
-    });
-    return;
-  }
+      // --- 2. Create New Agency (Redux Dispatch) ---
+      const newAgency = { name, phone, address };
+      const resultAction = await dispatch(createAgency(newAgency));
 
-  
-  const newAgency = { name, phone, address };
-  const resultAction = await dispatch(createAgency(newAgency));
+      // --- 3. Check for Successful Creation and Navigate ---
+      if (createAgency.fulfilled.match(resultAction)) {
+        const createdAgency = resultAction.payload;
 
-  if (createAgency.fulfilled.match(resultAction)) {
-    const createdAgency = resultAction.payload;
+        setName('');
+        setPhone('');
+        setAddress('');
 
-    setName('');
-    setPhone('');
-    setAddress('');
+        // 🎯 Navigation is here 
+        navigation.replace('AgencyDrawer', {
+          screen: 'AgencyProfileScreen',
+          params: { agencyId: createdAgency.id },
+        });
+      } else {
+        // Handle Redux/Thunk rejection (e.g., if createAgency failed on server)
+        Alert.alert('Registration Failed', resultAction.error.message || 'Unknown error');
+      }
 
-    navigation.replace('AgencyDrawer', {
-      screen: 'AgencyProfileScreen',
-      params: { agencyId: createdAgency.id },
-    });
-  }
-};
-
+    } catch (error) {
+      // ⚠️ CATCHES API/Network Errors (Crucial for debugging!)
+      console.error("Registration Error:", error); 
+      Alert.alert('Network Error', 'Could not connect to the server or an error occurred.');
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require('../assets/avatar/emoji.png')}
-          style={styles.headerImage}
-        />
-        <View style={styles.logoContainer}>
-          <Text style={styles.logoTextBig}>GO</Text>
-          <Text style={styles.logoTextSmall}>CarGo</Text>
-        </View>
-      </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20} 
+      // ✅ NEW — helps Android avoid hiding inputs
+    >
 
-      <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <MaterialCommunityIcon
-            name="account"
-            size={24}
-            color="#666"
-            style={styles.inputIcon}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="agency name"
-            placeholderTextColor="#999"
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} 
+        // ✅ NEW — paddingBottom ensures keyboard does NOT hide last field
+        keyboardShouldPersistTaps="handled"
+      >
 
-        <View style={styles.inputGroup}>
-          <Icon name="phone" size={24} color="#666" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="phone number"
-            placeholderTextColor="#999"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-          />
-        </View>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+            <Image
+              source={require('../assets/avatar/emoji.png')}
+              style={styles.headerImage}
+            />
+            <View style={styles.logoContainer}>
+              <Text style={styles.logoTextBig}>GO</Text>
+              <Text style={styles.logoTextSmall}>CarGo</Text>
+            </View>
+          </View>
 
-        <View style={styles.inputGroup}>
-          <Icon
-            name="map-pin"
-            size={24}
-            color="#666"
-            style={styles.inputIcon}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="address"
-            placeholderTextColor="#999"
-            value={address}
-            onChangeText={setAddress}
-          />
-        </View>
+          <View style={styles.formContainer}>
+            
+            <View style={styles.inputGroup}>
+              <MaterialCommunityIcon
+                name="account"
+                size={24}
+                color="#666"
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="agency name"
+                placeholderTextColor="#999"
+                value={name}
+                onChangeText={setName}
+                blurOnSubmit={false}
+              />
+            </View>
 
-        <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={styles.inputGroup}>
+              <Icon name="phone" size={24} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="phone number"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+                blurOnSubmit={false}
+              />
+            </View>
 
-      <View style={styles.footerCircle} />
-    </SafeAreaView>
+            <View style={styles.inputGroup}>
+              <Icon
+                name="map-pin"
+                size={24}
+                color="#666"
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="address"
+                placeholderTextColor="#999"
+                value={address}
+                onChangeText={setAddress}
+                blurOnSubmit={false}
+              />
+            </View>
+
+            <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.footerCircle} />
+        </SafeAreaView>
+
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

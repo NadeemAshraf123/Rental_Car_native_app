@@ -5,23 +5,39 @@ import {
   Image,
   TouchableOpacity,
   Switch,
-  StyleSheet,
   ScrollView,
-  useColorScheme,
+  Alert,
+  StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { DrawerContentComponentProps } from '@react-navigation/drawer';
+import { useSelector, useDispatch } from 'react-redux';
 import { storage } from '../../../../App';
+import { getAgencyById } from '../../../redux/agencycarSlice/AgencySlice';
 
-interface AgencyDrawerProps extends DrawerContentComponentProps {}
+// ✅ Updated: use Redux only, no more route.params
+const AgencyDrawer = ({ navigation }: any) => {
+  const dispatch = useDispatch();
 
-const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [themeLight, setThemeLight] = useState(true);
   const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState(false);
   const [activeAccount, setActiveAccount] = useState<'owner' | 'Agency'>('owner');
 
+  // ✅ Use Redux currentAgency for all agency data
+  const currentAgency = useSelector((state: any) => state.agency.currentAgency);
+
+  // ✅ Get agencyId directly from Redux state
+  const agencyId = currentAgency?.id;
+
+  // ✅ Fetch agency if not already loaded (e.g., after app restart)
+  useEffect(() => {
+    if (!currentAgency) {
+      dispatch(getAgencyById(1)); // Replace '1' with your logic to get logged-in agency ID
+    }
+  }, [currentAgency, dispatch]);
+
   const isDark = !themeLight;
+
   const dynamicStyles = getStyles(isDark);
 
   const handleAccountSelection = (targetAccount: 'owner' | 'Agency') => {
@@ -30,18 +46,17 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
     storage.set('userRole', targetAccount);
 
     if (targetAccount === 'Agency') {
-      navigation.replace('AgencyDrawer'); 
+      navigation.replace('AgencyDrawer');
     } else {
       navigation.replace('Home');
     }
   };
+
+  // ✅ Load stored user role from MMKV storage
   useEffect(() => {
     const storedRole = storage.getString('userRole') as 'owner' | 'Agency';
-    if (storedRole) {
-      setActiveAccount(storedRole);
-    }
+    if (storedRole) setActiveAccount(storedRole);
   }, []);
-  
 
   return (
     <ScrollView style={dynamicStyles.container}>
@@ -63,11 +78,11 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
         />
       </View>
 
+      {/* Account Switch Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => setIsAccountOptionsOpen(prev => !prev)}
-        >
+          onPress={() => setIsAccountOptionsOpen(prev => !prev)}>
           <View style={dynamicStyles.SwitchContainer}>
             <Image
               source={require('../../../assets/profile/profileIcons/userIcon.png')}
@@ -91,8 +106,7 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
                 dynamicStyles.accountOptionRow,
                 activeAccount === 'Agency' && dynamicStyles.accountOptionRowActive,
               ]}
-              onPress={() => handleAccountSelection('Agency')}
-            >
+              onPress={() => handleAccountSelection('Agency')}>
               <View style={dynamicStyles.radioDot}>
                 {activeAccount === 'Agency' && <View style={dynamicStyles.radioDotActive} />}
               </View>
@@ -104,31 +118,35 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
                 dynamicStyles.accountOptionRow,
                 activeAccount === 'owner' && dynamicStyles.accountOptionRowActive,
               ]}
-              onPress={() => handleAccountSelection('owner')}
-            >
+              onPress={() => handleAccountSelection('owner')}>
               <View style={dynamicStyles.radioDot}>
                 {activeAccount === 'owner' && <View style={dynamicStyles.radioDotActive} />}
               </View>
-              <Text style={dynamicStyles.accountOptionText}>User</Text> {/* ✅ changed from Owner */}
+              <Text style={dynamicStyles.accountOptionText}>User</Text>
             </TouchableOpacity>
           </View>
         )}
       </View>
 
-      {/* Remaining cards unchanged */}
+      {/* Profile Options Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => navigation.navigate('EditAgencyProfile')}
-        >
+          onPress={() => {
+            if (agencyId) {
+              // ✅ Updated: Use Redux currentAgency.id instead of route.params
+              navigation.navigate('EditAgencyProfile', { agencyId });
+            } else {
+              Alert.alert('Profile Data Missing', 'Please login correctly.');
+            }
+          }}>
           <Icon name="edit" size={15} color={isDark ? '#fff' : '#000'} />
           <Text style={dynamicStyles.rowText}>Edit Profile Information</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => navigation.navigate('AgencyNotificationScreen')}
-        >
+          onPress={() => navigation.navigate('AgencyNotificationScreen')}>
           <Icon name="notifications" size={15} color={isDark ? '#fff' : '#000'} />
           <Text style={dynamicStyles.rowText}>Notifications</Text>
           <View style={dynamicStyles.toggleContainer}>
@@ -145,14 +163,14 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
 
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => navigation.navigate('LanguageScreen')}
-        >
+          onPress={() => navigation.navigate('LanguageScreen')}>
           <Icon name="language" size={15} color={isDark ? '#fff' : '#000'} />
           <Text style={dynamicStyles.rowText}>Language</Text>
           <Text style={dynamicStyles.rightText}>English</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Theme & Security Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
           <Icon name="security" size={15} color={isDark ? '#fff' : '#000'} />
@@ -163,32 +181,48 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
           <Icon name="palette" size={15} color={isDark ? '#fff' : '#000'} />
           <Text style={dynamicStyles.rowText}>Theme</Text>
           <View style={dynamicStyles.toggleContainer}>
-            <Icon name="wb-sunny" size={15} color={themeLight ? '#FFD700' : '#ccc'} />
+            <Icon
+              name="wb-sunny"
+              size={15}
+              color={themeLight ? '#FFD700' : '#ccc'}
+            />
             <Switch
               value={themeLight}
               onValueChange={() => setThemeLight(prev => !prev)}
-              trackColor={{ false: '#fff', true: '#F9864A' }}
+              trackColor={{false: '#fff', true: '#F9864A'}}
             />
-            <Icon name="nights-stay" size={15} color={!themeLight ? '#333' : '#ccc'} />
+            <Icon
+              name="nights-stay"
+              size={15}
+              color={!themeLight ? '#333' : '#ccc'}
+            />
           </View>
         </View>
       </View>
 
+      {/* Help & Support Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
-          <Icon name="help-outline" size={15} color={isDark ? '#fff' : '#000'} />
+          <Icon
+            name="help-outline"
+            size={15}
+            color={isDark ? '#fff' : '#000'}
+          />
           <Text style={dynamicStyles.rowText}>Help & Support</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={dynamicStyles.row}>
-          <Icon name="contact-mail" size={15} color={isDark ? '#fff' : '#000'} />
+          <Icon
+            name="contact-mail"
+            size={15}
+            color={isDark ? '#fff' : '#000'}
+          />
           <Text style={dynamicStyles.rowText}>Contact Us</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={dynamicStyles.row}
-          onPress={() => navigation.navigate('PrivacyPolicyScreen')}
-        >
+          onPress={() => navigation.navigate('PrivacyPolicyScreen')}>
           <Icon name="privacy-tip" size={15} color={isDark ? '#fff' : '#000'} />
           <Text style={dynamicStyles.rowText}>Privacy Policy</Text>
         </TouchableOpacity>
@@ -196,8 +230,7 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
 
       <TouchableOpacity
         style={dynamicStyles.logoutButton}
-        onPress={() => navigation.navigate('RatingScreen')}
-      >
+        onPress={() => navigation.navigate('RatingScreen')}>
         <Icon name="logout" size={20} color="#fff" />
         <Text style={dynamicStyles.logoutText}>Logout</Text>
       </TouchableOpacity>
@@ -205,14 +238,13 @@ const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
   );
 };
 
+
 export default AgencyDrawer;
-
-
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { padding: 16, backgroundColor: isDark ? '#121212' : '#fff' },
-    profileContainer: { alignItems: 'center', marginBottom: 16 },
+    container: {padding: 16, backgroundColor: isDark ? '#121212' : '#fff'},
+    profileContainer: {alignItems: 'center', marginBottom: 16},
     profileImage: {
       width: 100,
       height: 100,
@@ -228,32 +260,113 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 12,
       padding: 4,
     },
-    homeContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-    homeText: { fontWeight: 'bold', fontSize: 16, color: isDark ? '#fff' : '#000' },
-    iconImage: { width: 10, height: 10, resizeMode: 'contain', marginLeft: 5 },
+    homeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 8,
+    },
+    homeText: {
+      fontWeight: 'bold',
+      fontSize: 16,
+      color: isDark ? '#fff' : '#000',
+    },
+    iconImage: {width: 10, height: 10, resizeMode: 'contain', marginLeft: 5},
     card: {
       backgroundColor: isDark ? '#1e1e1e' : '#fff',
       borderRadius: 8,
       paddingHorizontal: 10,
       marginVertical: 14,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
     },
-    row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 3 },
-    rowText: { flex: 1, marginLeft: 8, fontSize: 12, color: isDark ? '#fff' : '#000' },
-    rightText: { fontSize: 12, color: 'blue' },
-    toggleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    accountOptionRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingLeft: 20, borderTopWidth: 0.5, borderTopColor: isDark ? '#333' : '#eee' },
-    accountOptionRowActive: { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' },
-    accountOptionText: { fontSize: 12, color: isDark ? '#fff' : '#000', fontWeight: '600' },
-    radioDot: { width: 16, height: 16, borderRadius: 8, borderWidth: 1, borderColor: '#F9864A', marginRight: 12, marginLeft: 10, justifyContent: 'center', alignItems: 'center' },
-    radioDotActive: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#F9864A' },
-    SwitchContainer: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-    CommonIconImage: { width: 20, height: 20 },
-    SwitchiconContainer: { backgroundColor: '#F9864A', width: 22, height: 14, borderRadius: 5, justifyContent: 'center', alignItems: 'center' },
-    logoutButton: { flexDirection: 'row', backgroundColor: '#FF5722', padding: 12, borderRadius: 8, marginTop: 104, justifyContent: 'center', alignItems: 'center' },
-    logoutText: { color: '#fff', fontSize: 16, marginLeft: 8 },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 3,
+    },
+    rowText: {
+      flex: 1,
+      marginLeft: 8,
+      fontSize: 12,
+      color: isDark ? '#fff' : '#000',
+    },
+    rightText: {
+      fontSize: 12,
+      color: 'blue',
+    },
+    toggleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    accountOptionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 8,
+      paddingLeft: 20,
+      borderTopWidth: 0.5,
+      borderTopColor: isDark ? '#333' : '#eee',
+    },
+    accountOptionRowActive: {
+      backgroundColor: isDark
+        ? 'rgba(255, 255, 255, 0.05)'
+        : 'rgba(0, 0, 0, 0.05)',
+    },
+    accountOptionText: {
+      fontSize: 12,
+      color: isDark ? '#fff' : '#000',
+      fontWeight: '600',
+    },
+    radioDot: {
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F9864A',
+      marginRight: 12,
+      marginLeft: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    radioDotActive: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: '#F9864A',
+    },
+    SwitchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    CommonIconImage: {
+      width: 20,
+      height: 20,
+    },
+    SwitchiconContainer: {
+      backgroundColor: '#F9864A',
+      width: 22,
+      height: 14,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      backgroundColor: '#FF5722',
+      padding: 12,
+      borderRadius: 8,
+      marginTop: 104,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logoutText: {
+      color: '#fff',
+      fontSize: 16,
+      marginLeft: 8,
+    },
   });

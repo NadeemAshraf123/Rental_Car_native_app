@@ -10,7 +10,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {AgencyDrawerNavigator} from './src/screens/agency/agencydrawer/AgencyDrawerNavigator';
+// import {AgencyDrawerNavigator} from './src/screens/agency/agencydrawer/AgencyDrawerNavigator';
+import  AgencyDrawerNavigator  from './src/screens/agency/agencydrawer/AgencyDrawerNavigator';
 import Home from './src/screens/home/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import LoginScreen from './src/screens/LoginScreen';
@@ -33,7 +34,7 @@ import InviteFriendsScreen from './src/screens/ratingScreens/InviteFriendsScreen
 import SearchFriends from './src/screens/ratingScreens/SearchFriends';
 import SearchInviteFriends from './src/screens/ratingScreens/SearchInviteFriends';
 import HomeScreen from './src/screens/home/HomeScreen';
-import EditAgencyProfile from './src/agencySide/EditAgencyProfile';
+// import EditAgencyProfile from './src/agencySide/EditAgencyProfileNotAllowed';
 import AgencyNotificationScreen from './src/agencySide/AgencyNotificationScreen';
 import AgencyCarDetailScreen from './src/agencySide/AgencyCarDetailScreen';
 import AgencyProfileScreen from './src/agencySide/AgencyProfileScreen';
@@ -41,6 +42,7 @@ import AgencyTabNavigator from './src/agencySide/agencyTabNavigator/AgencyTabNav
 import CarsDetailView from './src/screens/home/CarsDetailView';
 import AddNewCarScreen from './src/agencySide/addagencycars/AddNewCarScreen';
 import AgencyRegistrationScreen from './src/agencySide/AgencyRegistrationScreen';
+import EditAgencyProfileScreen from './src/agencySide/EditAgencyProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -107,8 +109,8 @@ function App(): React.JSX.Element {
           <Stack.Screen name="AgencyDrawer" component={AgencyDrawerNavigator} />
 
           <Stack.Screen
-            name="EditAgencyProfile"
-            component={EditAgencyProfile}
+            name="EditAgencyProfileScreen"
+            component={EditAgencyProfileScreen}
           />
           <Stack.Screen
             name="AgencyNotificationScreen"

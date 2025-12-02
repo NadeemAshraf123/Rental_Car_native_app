@@ -14,7 +14,9 @@ import { DrawerActions } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getAgencyCars } from '../redux/agencycarSlice/agencyCarsSlice';
+import { getAgencyById } from '../redux/agencycarSlice/AgencySlice'; 
 
+// CarCard component
 const CarCard = ({ carName, imageUri, features }: any) => {
   return (
     <View style={styles.card}>
@@ -45,13 +47,16 @@ const CarCard = ({ carName, imageUri, features }: any) => {
   );
 };
 
-export default function AgencyProfileScreen({ navigation, route }: any) {
+export default function AgencyProfileScreen({ navigation }: any) {
   const dispatch = useDispatch();
+
+  // Get agency from Redux store
+  const currentAgency = useSelector((state: any) => state.agency.currentAgency);
   const { list: carData, loading } = useSelector((state: any) => state.agencyCars);
 
-  
-  const { agencyId } = route.params;
+  const agencyId = currentAgency?.id;
 
+  // Map car images
   const imageMap: Record<string, any> = {
     'white.png': require('../assets/agencyreistration/white.png'),
     'red1.png': require('../assets/agencyreistration/red1.png'),
@@ -60,10 +65,19 @@ export default function AgencyProfileScreen({ navigation, route }: any) {
     'black1.png': require('../assets/agencyreistration/black1.png'),
   };
 
+  // Redirect if agency data not loaded
   useEffect(() => {
-   
-    dispatch(getAgencyCars(agencyId));
-  }, [agencyId]);
+    if (!currentAgency) {
+      navigation.replace('AgencyRegistrationScreen'); // redirect to register if not found
+    }
+  }, [currentAgency, navigation]);
+
+  // Fetch cars whenever agencyId exists
+  useEffect(() => {
+    if (agencyId) {
+      dispatch(getAgencyCars(agencyId));
+    }
+  }, [agencyId, currentAgency, dispatch]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -71,9 +85,9 @@ export default function AgencyProfileScreen({ navigation, route }: any) {
         <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           <Feather name="menu" size={28} color="#F9864A" />
         </TouchableOpacity>
-        <Text style={styles.title}>OUR PROFILE</Text>
+        <Text style={styles.title}>OUR Agency PROFILE</Text>
         <Image
-          source={require('../assets/agencyreistration/profile1.png')}
+          source={currentAgency?.image ? { uri: currentAgency.image } : require('../assets/agencyreistration/profile1.png')}
           style={styles.stackImage}
           resizeMode="contain"
         />
@@ -87,8 +101,7 @@ export default function AgencyProfileScreen({ navigation, route }: any) {
             <CarCard
               key={car.id}
               carName={car.name}
-              
-              imageUri={imageMap[car.image]}
+              imageUri={imageMap[car.image] || require('../assets/agencyreistration/white.png')}
               features={car.features}
             />
           ))

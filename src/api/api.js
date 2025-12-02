@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-
 const API = axios.create({ baseURL: 'http://192.168.0.47:3000' });
+
 
 export const loginUser = async (fullName, password) => {
   const res = await API.get('/users');
@@ -23,11 +23,11 @@ export const findUserByEmail = async (email) => {
   return res.data[0];
 };
 
-
 export const updateUserPassword = async (id, newPassword) => {
   const res = await API.patch(`/users/${id}`, { password: newPassword });
   return res.data;
 };
+
 
 export const fetchAgencyCars = async (agencyId) => {
   const res = await API.get(`/agencyCars?agencyId=${agencyId}`);
@@ -40,17 +40,17 @@ export const addAgencyCar = async (agencyId, carData) => {
 };
 
 
-
 export const addAgency = async (agencyData) => {
-    const res = await API.post('/agencies', agencyData);
-    return res.data;
-};
-export const fetchAgencyById = async (id) => {
-  const res = await API.get(`/agencies/${id}`);
+  const res = await API.post('/agencies', agencyData);
   return res.data;
 };
 
+export const getAgencyById = async (agencyId) => {
+  const res = await API.get(`/agencies/${agencyId}`);
+  return res.data;
+};
 
-
-
-
+export const updateAgencyById = async (agencyId, updatedData) => {
+  const res = await API.patch(`/agencies/${agencyId}`, updatedData);
+  return res.data;
+};

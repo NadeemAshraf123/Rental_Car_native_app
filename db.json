@@ -4,92 +4,26 @@
       "id": "1",
       "fullName": "Ali Raza",
       "email": "ali@example.com",
-      "password": "12345"
-    },
-    {
-      "id": "2",
-      "fullName": "Sara Khan",
-      "email": "sara@example.com",
-      "password": "password123"
-    },
-    {
-      "id": "17f8",
-      "fullName": "Nadeem",
-      "email": "nadeem123@gmail.com",
-      "password": "12345"
+      "password": "123456"
     }
   ],
   "agencies": [
     {
-      "id": "ff67",
+      "id": "716b",
       "name": "My Agency",
-      "phone": "03124658970",
-      "address": "Bahawalngrpure "
-    },
-    {
-      "id": "859a",
-      "name": "Agency",
-      "phone": "03317955064",
-      "address": "Vehari"
+      "phone": "1234567890",
+      "address": "Bahawalngrpure"
     }
   ],
   "agencyCars": [
     {
-      "id": "c1a6",
+      "id": "ecbe",
       "name": "Hyundai ",
       "image": "white.png",
       "features": [
         {
           "icon": "automatic",
-          "text": "Automatically "
-        },
-        {
-          "icon": "doors",
-          "text": "4"
-        },
-        {
-          "icon": "mileage",
-          "text": "5"
-        },
-        {
-          "icon": "ac",
-          "text": "Ac"
-        }
-      ],
-      "agencyId": "ff67"
-    },
-    {
-      "id": "9a86",
-      "name": "Peugeot",
-      "image": "red1.png",
-      "features": [
-        {
-          "icon": "automatic",
-          "text": "Automatic "
-        },
-        {
-          "icon": "doors",
-          "text": "4 Doors"
-        },
-        {
-          "icon": "mileage",
-          "text": "280 km"
-        },
-        {
-          "icon": "ac",
-          "text": "A/C"
-        }
-      ],
-      "agencyId": "ff67"
-    },
-    {
-      "id": "3705",
-      "name": "AUDI",
-      "image": "blueCar.png",
-      "features": [
-        {
-          "icon": "automatic",
-          "text": "Automatically "
+          "text": "Automatic"
         },
         {
           "icon": "doors",
@@ -101,82 +35,9 @@
         },
         {
           "icon": "ac",
-          "text": "A/C"
-        }
-      ],
-      "agencyId": "ff67"
-    },
-    {
-      "id": "6c1a",
-      "name": "Kia",
-      "image": "black2.png",
-      "features": [
-        {
-          "icon": "automatic",
-          "text": "Automatically "
-        },
-        {
-          "icon": "doors",
-          "text": "4-Doors"
-        },
-        {
-          "icon": "mileage",
-          "text": "340 km"
-        },
-        {
-          "icon": "ac",
-          "text": "A/C"
-        }
-      ],
-      "agencyId": "ff67"
-    },
-    {
-      "id": "abc5",
-      "name": "Toyota Rav",
-      "image": "black1.png",
-      "features": [
-        {
-          "icon": "automatic",
-          "text": "Automatic "
-        },
-        {
-          "icon": "doors",
-          "text": "4-Doors"
-        },
-        {
-          "icon": "mileage",
-          "text": "310 K/M"
-        },
-        {
-          "icon": "ac",
-          "text": "A/C"
-        }
-      ],
-      "agencyId": "ff67"
-    },
-    {
-      "id": "8175",
-      "name": "Hyundai ",
-      "image": "red1.png",
-      "features": [
-        {
-          "icon": "automatic",
-          "text": "Autimatic "
-        },
-        {
-          "icon": "doors",
-          "text": "4-Doors"
-        },
-        {
-          "icon": "mileage",
-          "text": "220 km"
-        },
-        {
-          "icon": "ac",
           "text": "AC"
         }
-      ],
-      "agencyId": "859a"
+      ]
     }
   ]
 }
