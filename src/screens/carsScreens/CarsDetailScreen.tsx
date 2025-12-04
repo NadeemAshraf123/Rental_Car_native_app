@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect,useState } from 'react';
 import {
   View,
   Text,
@@ -6,66 +6,68 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../redux/store';
+import { fetchCarDetail, CarDetail } from '../../redux/homeSlice';
+import type { HomeCar } from '../../redux/homeSlice';
 
 
-const CarsDetailScreen = ( {navigation} ) => {
+const carImageMap: Record<string, any> = {
+  'Car1.png': require('../../assets/homeCars/Car1.png'),
+  'Car2.png': require('../../assets/homeCars/Car2.png'),
+  'Car3.png': require('../../assets/homeCars/Car3.png'),
+  'cars.png': require('../../assets/homeCars/homeAgenciesImages/cars.png'),
+};
 
-  const carDetails = {
-    name: 'AUDI',
-    rating: 4.9,
-    reviews: 230,
-    price: 9000,
-    specs: [
-      {
-        icon: 'phone-portrait-outline',
-        label: '4 Seats',
-        type: 'seat',
-      },
-      {
-        icon: 'car-door',
-        label: '4 Doors',
-        type: 'door',
-      },
-      {
-        icon: 'repeat-outline',
-        label: 'Manual',
-        type: 'manual',
-      },
-      {
-        icon: 'snow',
-        label: 'Air Conditioning',
-        type: 'ac',
-      },
-    ],
-    features: [
-      {
-        icon: 'gas-station',
-        title: 'Diesel',
-        subtitle: 'Common Fuel Injection',
-      },
-      {
-        icon: 'thermometer-half',
-        title: 'Cool Seat',
-        subtitle: 'Temp Control on seat',
-      },
-      {
-        icon: 'speedometer',
-        title: 'Acceleration',
-        subtitle: '0-100km / 11s',
-      },
-    ],
-  };
+type CarsDetailRouteParams = {
+  car: HomeCar;
+};
 
-  const renterDetails = {
-    name: 'Deficar',
-    role: 'Renter',
-    image: require('../../assets/avatar/avatar1.jpg'),
-  };
+const CarsDetailScreen = ({ navigation }: any) => {
+  const [selectedBooking, setSelectedBooking] = useState({
+  startDate: null,
+  endDate: null,
+  pickUpTime: null,
+  returnTime: null
+});
 
-  const FeatureBox = ({ iconName, title, subtitle }) => (
+  const route = useRoute<RouteProp<Record<string, CarsDetailRouteParams>, string>>();
+  const { car } = route.params;
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentCarDetail, carDetailLoading, error } = useSelector(
+    (state: RootState) => state.home
+  );
+
+
+  useEffect(() => {
+  if (route.params?.selectedData) {
+    setSelectedBooking(route.params.selectedData);
+  }
+}, [route.params]);
+
+
+  useEffect(() => {
+    if (car?.id) {
+      dispatch(fetchCarDetail(car.id));
+    }
+  }, [car?.id, dispatch]);
+
+  const imageSource = car
+  ? typeof car.image === 'string'
+    ? carImageMap[car.image] || carImageMap['Car1.png']
+    : car.image
+  : carImageMap['Car1.png']; 
+
+
+  const detail: CarDetail | null = currentCarDetail;
+
+  const FeatureBox = ({ iconName, title, subtitle }: { iconName: string; title: string; subtitle: string }) => (
     <View style={styles.featureBox}>
       <MaterialCommunityIcon name={iconName} size={24} color="#F9864A" />
       <Text style={styles.featureTitle}>{title}</Text>
@@ -73,12 +75,28 @@ const CarsDetailScreen = ( {navigation} ) => {
     </View>
   );
 
-  const SpecItem = ({ iconName, label }) => (
+  const SpecItem = ({ iconName, label }: { iconName: string; label: string }) => (
     <View style={styles.specItem}>
-      <MaterialCommunityIcon name={iconName} size={18} color="#999" style={styles.specIcon} />
+      <MaterialCommunityIcon name={iconName} size={18} color="#999" />
       <Text style={styles.specText}>{label}</Text>
     </View>
   );
+
+  if (carDetailLoading && !detail) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#F9864A" />
+      </View>
+    );
+  }
+
+  if (!detail) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Car details not available.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -87,7 +105,7 @@ const CarsDetailScreen = ( {navigation} ) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color="#000" style={styles.headerIcon} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>{carDetails.name}</Text>
+          <Text style={styles.headerText}>{detail.name}</Text>
           <TouchableOpacity onPress={() => console.log('Toggle favorite')}>
             <Icon name="heart-outline" size={24} color="#000" style={styles.headerIcon} />
           </TouchableOpacity>
@@ -98,7 +116,7 @@ const CarsDetailScreen = ( {navigation} ) => {
             <Icon name="chevron-back" size={24} color="#000" />
           </TouchableOpacity>
           <Image
-            source={require('../../assets/avatar/Car4.png')}
+            source={imageSource}
             style={styles.carImage}
             resizeMode="contain"
           />
@@ -114,7 +132,7 @@ const CarsDetailScreen = ( {navigation} ) => {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Specification</Text>
           <View style={styles.featuresRow}>
-            {carDetails.features.map((feature, index) => (
+            {detail.features.map((feature, index) => (
               <FeatureBox
                 key={index}
                 iconName={feature.icon}
@@ -127,46 +145,31 @@ const CarsDetailScreen = ( {navigation} ) => {
 
         <View style={styles.infoContainer}>
           <View>
-            <Text style={styles.carName}>{carDetails.name}</Text>
+            <Text style={styles.carName}>{detail.name}</Text>
             <View style={styles.ratingRow}>
               <Icon name="star" size={16} color="#FFC72C" />
               <Text style={styles.ratingText}>
-                {carDetails.rating} ({carDetails.reviews} Reviews)
+                {detail.rating} ({detail.reviews} Reviews)
               </Text>
             </View>
           </View>
           <Text style={styles.priceText}>
-            {carDetails.price.toLocaleString()} D.A
+            {detail.price.toLocaleString()} D.A
             <Text style={styles.perDayText}> / per day</Text>
           </Text>
         </View>
 
         <View style={styles.specsGrid}>
-          
-          <View style={styles.specItem}>
-              <MaterialCommunityIcon name="seat" size={24} color="#F9864A" />
-              <Text style={styles.specText}>4 Seats</Text>
-          </View>
-          <View style={styles.specItem}>
-              <MaterialCommunityIcon name="car-door" size={24} color="#F9864A" />
-              <Text style={styles.specText}>4 Doors</Text>
-          </View>
-          <View style={styles.specItem}>
-              <MaterialCommunityIcon name="cog-outline" size={24} color="#F9864A" />
-              <Text style={styles.specText}>Manual</Text>
-          </View>
-          <View style={styles.specItem}>
-              <MaterialCommunityIcon name="air-conditioner" size={24} color="#F9864A" />
-              <Text style={styles.specText}>Air Conditioning</Text>
-          </View>
+          {detail.specs.map((spec, index) => (
+            <SpecItem key={index} iconName={spec.icon} label={spec.label} />
+          ))}
         </View>
 
-
         <View style={styles.renterContainer}>
-          <Image source={renterDetails.image } style={styles.renterImage} />
+          <Image source={require('../../assets/avatar/avatar1.jpg')} style={styles.renterImage} />
           <View style={styles.renterDetails}>
-            <Text style={styles.renterName}>{renterDetails.name}</Text>
-            <Text style={styles.renterRole}>{renterDetails.role}</Text>
+            <Text style={styles.renterName}>{detail.renter.name}</Text>
+            <Text style={styles.renterRole}>{detail.renter.role}</Text>
           </View>
           <View style={styles.contactButtons}>
             <TouchableOpacity style={styles.contactButton}>
@@ -179,17 +182,25 @@ const CarsDetailScreen = ( {navigation} ) => {
         </View>
 
         <Text style={styles.datePickerTitle}>Pick a date</Text>
+
         <TouchableOpacity style={styles.datePicker} onPress={() => navigation.navigate('TimeSelectingScreen')}>
+
           <Text style={styles.datePickerText}>Starting Date</Text>
           <Icon name="calendar-outline" size={24} color="blue" />
         </TouchableOpacity>
+        
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.rentButton} onPress={() => navigation.navigate('TimeSelectingScreen')}>
+        <TouchableOpacity style={styles.rentButton} onPress={() => navigation.navigate('BookingScreen', {
+          car, 
+          ...selectedBooking
+        })
+        }
+      >
           <Text style={styles.rentButtonText}>Rent Now</Text>
           <Text style={styles.rentPriceText}>
-            {carDetails.price.toLocaleString()} D.A
+            {detail.price.toLocaleString()} D.A
             <Text style={styles.rentPricePerDay}> /day</Text>
           </Text>
         </TouchableOpacity>
@@ -235,7 +246,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   carImage: {
-    width: '80%',
+    width: 270,
     height: 180,
     borderRadius: 10,
   },

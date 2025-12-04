@@ -4,24 +4,35 @@ import CarsDetailView from './CarsDetailView';
 import AgenciesDetailView from './AgenciesDetailView';
 import FamousDetailView from './FamousDetailView'; 
 
-
 interface ContentPanelProps { 
-    navigation: any ;
+  carCategories: string[];
+  carItems: any[];
+  agencyCategories: string[];
+  agencyItems: any[];
+  famousCategories: string[];
+  famousItems: any[];
 }
 
 type ActiveTab = 'Cars' | 'Agencies' | 'Famous';
 
-const ContentPanel = ({ navigation }: ContentPanelProps) => {
+const ContentPanel: React.FC<ContentPanelProps> = ({
+  carCategories,
+  carItems,
+  agencyCategories,
+  agencyItems,
+  famousCategories,
+  famousItems,
+}) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('Cars');
 
   const renderDetailView = () => {
     switch (activeTab) {
       case 'Cars':
-        return <CarsDetailView navigation={navigation} />;
+        return <CarsDetailView categories={carCategories} items={carItems} />;
       case 'Agencies':
-        return <AgenciesDetailView navigation={navigation} />;
+        return <AgenciesDetailView categories={agencyCategories} items={agencyItems} />;
       case 'Famous':
-        return <FamousDetailView  />;
+        return <FamousDetailView categories={famousCategories} items={famousItems} />;
       default:
         return null;
     }
@@ -35,7 +46,6 @@ const ContentPanel = ({ navigation }: ContentPanelProps) => {
         <Text style={styles.logoText}>GO</Text>
         <Text style={styles.logoSubText}>CarGo</Text>
       </View>
-
 
       <View style={styles.contentWrapper}>
       <View style={styles.tabNav}>

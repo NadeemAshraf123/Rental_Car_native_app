@@ -1,34 +1,58 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'; // For clock icon
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { createBooking } from '../../redux/rentalbookingslice/RentalBookingSlice';
 
-const BookingScreen = ( {navigation} ) => {
+const BookingScreen = ({ navigation, route }) => {
 
-    const [isModalVisible, setIsModalVisible] = useState(true);
+  const dispatch = useDispatch();
 
-  
+  const { car, startDate, endDate, pickUpTime, returnTime } = route.params;
+
+  const userId = "TEMP_USER_01"; 
+
+  const booking = {
+    id: Date.now().toString(),
+    carId: car.id,
+    carName: car.name,
+    carImage: car.image,
+    pricePerDay: car.price,
+    startDate,
+    endDate,
+    pickUpTime,
+    returnTime,
+    bookedBy: userId,
+    createdAt: new Date().toISOString()
+  };
+
+  useEffect(() => {
+    dispatch(createBooking(booking));
+  }, []);
+
+  const [isModalVisible, setIsModalVisible] = useState(true);
+
   const bookingDetails = {
-    bookingId: 'SM12911234',
+    bookingId: booking.id,
     car: {
-      make: 'AUDI',
+      make: car.name,
       modelYear: 2021,
-      image: 'https://via.placeholder.com/150x80?text=Audi+Car',
+      image: 'https://via.placeholder.com/150x80?text=Car',
     },
-    pickupDate: '29/11/2023',
-    returnDate: '01/03/2024',
+    pickupDate: startDate,
+    returnDate: endDate,
     pickupLocation: 'Chlef',
     rentingDays: 3,
-    totalPrice: '28000.000',
+    totalPrice: (car.price * 3).toString(),
   };
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}
-                    keyboardShouldPersistTaps="handled"
-            >
-        
+                  keyboardShouldPersistTaps="handled">
+
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
             <Icon name="arrow-back" size={24} color="#000" />
@@ -36,7 +60,6 @@ const BookingScreen = ( {navigation} ) => {
           <Text style={styles.headerTitle}>Your Booking</Text>
         </View>
 
-        
         <View style={styles.bookingCard}>
           <Text style={styles.bookingIdText}>Your Booking : {bookingDetails.bookingId}</Text>
 
@@ -44,26 +67,27 @@ const BookingScreen = ( {navigation} ) => {
             <Image source={{ uri: bookingDetails.car.image }} style={styles.carImage} resizeMode="contain" />
             <View style={styles.carInfo}>
               <Text style={styles.carName}>{bookingDetails.car.make} - {bookingDetails.car.modelYear}</Text>
+
               <View style={styles.infoLine}>
                 <MaterialCommunityIcon name="calendar" size={16} color="#666" />
                 <Text style={styles.infoText}>{bookingDetails.pickupDate} - {bookingDetails.returnDate}</Text>
               </View>
+
               <View style={styles.infoLine}>
                 <MaterialCommunityIcon name="map-marker" size={16} color="#666" />
                 <Text style={styles.infoText}>Pickup Location: {bookingDetails.pickupLocation}</Text>
               </View>
+
             </View>
           </View>
         </View>
 
-    
         <View style={styles.rentingTimeBox}>
           <MaterialCommunityIcon name="clock-time-four-outline" size={24} color="#000" />
           <Text style={styles.rentingTimeLabel}>Renting Time</Text>
           <Text style={styles.rentingTimeValue}>{bookingDetails.rentingDays} Days</Text>
         </View>
 
-        
         <View style={styles.totalSection}>
           <View style={styles.totalTextContainer}>
             <Text style={styles.totalLabel}>Total <Text style={styles.totalDays}>({bookingDetails.rentingDays} days)</Text></Text>
@@ -74,34 +98,29 @@ const BookingScreen = ( {navigation} ) => {
             <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('CarsDetailScreen')}>
               <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.checkoutButton}  onPress={() =>  setIsModalVisible(true)}>
+
+            <TouchableOpacity style={styles.checkoutButton} onPress={() => setIsModalVisible(true)}>
               <Text style={styles.checkoutButtonText}>Checkout</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
 
+    
       <Modal
-        animationType="fade"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={() => {
-        
-          setIsModalVisible(!isModalVisible);
-        }}
+        animationType="fade"
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            
-    
+
             <View style={styles.successIconBackground}>
               <MaterialCommunityIcon name="check" size={70} color="#fff" />
             </View>
 
-            
             <Text style={styles.modalText}>Booking Successful</Text>
 
-    
             <View style={styles.modalButtonsContainer}>
               <TouchableOpacity
                 style={styles.modalButton}
@@ -109,17 +128,17 @@ const BookingScreen = ( {navigation} ) => {
               >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={styles.modalButtonDone}
                 onPress={() => {
-                  console.log('Done clicked, navigate home/summary');
                   setIsModalVisible(false);
                   navigation.navigate('CarsDetailScreen');
                 }}
               >
                 <Text style={styles.modalButtonDoneText}>Done</Text>
               </TouchableOpacity>
+
             </View>
 
           </View>
@@ -130,8 +149,6 @@ const BookingScreen = ( {navigation} ) => {
 };
 
 export default BookingScreen;
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -146,10 +163,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 50, 
+    paddingTop: 50,
     justifyContent: 'center',
     position: 'relative',
-
   },
   headerIcon: {
     position: 'absolute',
@@ -166,7 +182,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  
   bookingCard: {
     backgroundColor: '#fff',
     borderRadius: 15,
@@ -174,7 +189,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     padding: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 0,
@@ -188,14 +203,13 @@ const styles = StyleSheet.create({
   carDetailsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    
   },
   carImage: {
     width: 100,
     height: 60,
     marginRight: 25,
     borderRadius: 8,
-    backgroundColor: '#eee', 
+    backgroundColor: '#eee',
   },
   carInfo: {
     flex: 1,
@@ -217,7 +231,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 
-
   rentingTimeBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -231,10 +244,9 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 20,
     marginBottom: 20,
-
   },
   rentingTimeLabel: {
-    flex: 1, 
+    flex: 1,
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
@@ -246,11 +258,10 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 
-  
   totalSection: {
     marginHorizontal: 20,
-    marginTop: 40, 
-    alignItems: 'center', 
+    marginTop: 40,
+    alignItems: 'center',
   },
   totalTextContainer: {
     flexDirection: 'row',
@@ -271,7 +282,7 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#f87232', 
+    color: '#f87232',
   },
   actionButtons: {
     flexDirection: 'row',
@@ -307,14 +318,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
-//   modal 
+  //   modal
 
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     margin: 20,
@@ -330,13 +341,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '80%', 
+    width: '80%',
   },
   successIconBackground: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#f87232', 
+    backgroundColor: '#f87232',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -376,6 +387,6 @@ const styles = StyleSheet.create({
   modalButtonDoneText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#f87232', 
+    color: '#f87232',
   },
 });

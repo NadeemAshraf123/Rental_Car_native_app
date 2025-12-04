@@ -1,15 +1,40 @@
-import React from 'react';
-import { View, StyleSheet, ImageBackground , Text, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ImageBackground, ActivityIndicator, Text } from 'react-native';
 import HeaderBar from './HeaderBar';
 import { ScrollView } from 'react-native';
 import ContentPanel from './ContentPanel';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../redux/store';
+import { fetchHomeData } from '../../redux/homeSlice';
 
 const MAP_HEIGHT = 350;
-
 const SPACER_HEIGHT = 300;
 
+export default function HomeScreen() {
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    carCategories,
+    cars,
+    agencyCategories,
+    agencies,
+    famousCategories,
+    famousItems,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.home);
 
-export default function HomeScreen({ navigation }: any) {
+  useEffect(() => {
+    dispatch(fetchHomeData());
+  }, [dispatch]);
+
+  const isDataReady =
+    carCategories.length > 0 ||
+    cars.length > 0 ||
+    agencyCategories.length > 0 ||
+    agencies.length > 0 ||
+    famousCategories.length > 0 ||
+    famousItems.length > 0;
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -24,9 +49,26 @@ export default function HomeScreen({ navigation }: any) {
         contentContainerStyle={styles.scrollContentContainer}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.mapSpacer}  />
+        <View style={styles.mapSpacer} />
 
-        <ContentPanel />
+        {loading && !isDataReady ? (
+          <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#F9864A" />
+          </View>
+        ) : error && !isDataReady ? (
+          <View style={{ paddingVertical: 80, alignItems: 'center' }}>
+            <Text style={{ color: 'red' }}>{error}</Text>
+          </View>
+        ) : (
+          <ContentPanel
+            carCategories={carCategories}
+            carItems={cars}
+            agencyCategories={agencyCategories}
+            agencyItems={agencies}
+            famousCategories={famousCategories}
+            famousItems={famousItems}
+          />
+        )}
 
       </ScrollView>
     </View>

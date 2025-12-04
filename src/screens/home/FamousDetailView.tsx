@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
+interface FamousItem {
+  id: number;
+  name: string;
+  detail: string;
+  image: any; // string key from API or require(...)
+  price: string;
+}
 
-const FAMOUS_CATEGORIES = ['All', 'Top Rated', 'Luxury', 'Budget', 'SUV', 'Electric'];
-const FAMOUS_ITEMS = [
-    { id: 1, name: 'Audi A4 2023', detail: 'Lux | 5/day', image: require('../../assets/homeCars/homeAgenciesImages/white.png'), price: '250$' },
-    { id: 2, name: 'Hyundai i10', detail: 'Budget | 4/day', image: require('../../assets/homeCars/homeAgenciesImages/famous3.png'), price: '80$' },
-    { id: 3, name: 'Toyota Hilux', detail: 'Truck | 3/day', image: require('../../assets/homeCars/homeAgenciesImages/Car2.png'), price: '180$' },
-    { id: 4, name: 'Peugeot 301', detail: 'Sedan | 5/day', image: require('../../assets/homeCars/homeAgenciesImages/agency2.png'), price: '120$' },
-    { id: 5, name: 'KIA Sportage', detail: 'SUV | 4/day', image: require ('../../assets/homeCars/homeAgenciesImages/agency7.png'), price: '200$' },
-];
+interface FamousDetailViewProps {
+  categories: string[];
+  items: FamousItem[];
+}
 
-const FamousDetailView = () => {
+// Map image keys from API/db.json to actual require() calls
+const famousImageMap: Record<string, any> = {
+  'white.png': require('../../assets/homeCars/homeAgenciesImages/white.png'),
+  'famous3.png': require('../../assets/homeCars/homeAgenciesImages/famous3.png'),
+  'Car2.png': require('../../assets/homeCars/homeAgenciesImages/Car2.png'),
+  'agency2.png': require('../../assets/homeCars/homeAgenciesImages/agency2.png'),
+  'agency7.png': require('../../assets/homeCars/homeAgenciesImages/agency7.png'),
+};
+
+const FamousDetailView: React.FC<FamousDetailViewProps> = ({ categories, items }) => {
     const [activeCategory, setActiveCategory] = useState('All');
 
     return (
@@ -19,7 +31,7 @@ const FamousDetailView = () => {
             <Text style={styles.categoryTitle}> Categories </Text>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                {FAMOUS_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                     <TouchableOpacity
                         key={cat}
                         style={[
@@ -42,10 +54,16 @@ const FamousDetailView = () => {
 
             
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.itemScroll}>
-                {FAMOUS_ITEMS.map((item) => (
+                {items.map((item) => {
+                    const source =
+                      typeof item.image === 'string'
+                        ? famousImageMap[item.image] || famousImageMap['white.png']
+                        : item.image;
+
+                    return (
                     <TouchableOpacity key={item.id} style={styles.itemCard}>
                        
-                        <Image source={item.image} style={styles.itemImage} />
+                        <Image source={source} style={styles.itemImage} />
                         
                         <View style={styles.detailBody}>
                             <Text style={styles.itemNameText} numberOfLines={1}>{item.name}</Text>
@@ -55,7 +73,7 @@ const FamousDetailView = () => {
                             <Text style={styles.priceText}>{item.price}</Text>
                         </View> */}
                     </TouchableOpacity>
-                ))}
+                )})}
             </ScrollView>
         </View>
     );

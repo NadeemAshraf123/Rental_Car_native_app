@@ -11,6 +11,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/authSlice';
+import { fetchAgencyByUserId } from '../../redux/agencycarSlice/AgencySlice';
 import { storage } from '../../../App';
 
 const UserDrawer = () => {
@@ -21,17 +24,35 @@ const UserDrawer = () => {
 
   const scheme = useColorScheme();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const userId = useSelector((state: any) => state.auth.user?.id);
   const isDark = !themeLight;
   const dynamicStyles = getStyles(isDark);
 
-  const handleAccountSelection = (targetAccount: 'owner' | 'Agency') => {
+  const handleAccountSelection = async (targetAccount: 'owner' | 'Agency') => {
     setActiveAccount(targetAccount);
     storage.set('userRole', targetAccount);
 
     if (targetAccount === 'Agency') {
-      navigation.navigate('RegistrationScreen');
+      if (userId) {
+        try {
+          const resultAction = await dispatch(fetchAgencyByUserId(userId) as any);
+          const agency = resultAction.payload;
+          
+          if (agency) {
+            (navigation as any).navigate('Home');
+          } else {
+            (navigation as any).navigate('AgencyRegistrationScreen');
+          }
+        } catch (error) {
+          console.error('Error fetching agency:', error);
+          (navigation as any).navigate('AgencyRegistrationScreen');
+        }
+      } else {
+        (navigation as any).navigate('AgencyRegistrationScreen');
+      }
     } else {
-      navigation.navigate('Home');
+      (navigation as any).navigate('Home');
     }
   };
 
@@ -187,7 +208,13 @@ const UserDrawer = () => {
 
       <TouchableOpacity
         style={dynamicStyles.logoutButton}
-        onPress={() => navigation.navigate('RatingScreen')}
+        onPress={() => {
+          dispatch(logout());
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'LoginScreen' }],
+          });
+        }}
       >
         <Icon name="logout" size={20} color="#fff" />
         <Text style={dynamicStyles.logoutText}>Logout</Text>
@@ -224,22 +251,6 @@ const getStyles = (isDark: boolean) =>
       justifyContent: 'center',
       marginBottom: 8,
     },
-    accountOptionRow: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 8,
-      backgroundColor: '#eee',
-      marginHorizontal: 5,
-    },
-    accountOptionRowActive: {
-      backgroundColor: '#F9864A',
-    },
-    accountOptionText: {
-      fontSize: 14,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-
     homeText: {
       fontWeight: 'bold',
       fontSize: 16,

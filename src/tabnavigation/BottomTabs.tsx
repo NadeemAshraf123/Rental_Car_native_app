@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {View, StyleSheet, ImageBackground, Image} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -8,14 +8,61 @@ import sendIcon from '../assets/bottomTabBar/sendIcon.png';
 import activeBg from '../assets/bottomTabBar/activeBg.png';
 
 import HomeScreen from '../screens/home/HomeScreen';
+import AgencyProfileScreen from '../agencySide/AgencyProfileScreen';
 import NotificationScreen from '../screens/NotificationScreen';
+import AgencyNotificationScreen from '../agencySide/AgencyNotificationScreen';
 import SendScreen from '../screens/ChatScreen';
 import { storage } from '../../App';
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs = () => {
+// Wrapper component for Home tab that conditionally renders based on role
+const HomeTabWrapper = (props: any) => {
+  const [userRole, setUserRole] = useState<string>('owner');
 
+  useEffect(() => {
+    const initialRole = storage.getString('userRole');
+    if (initialRole) {
+      setUserRole(initialRole);
+    }
+
+    const subscription = storage.addOnValueChangedListener(() => {
+      const newRole = storage.getString('userRole');
+      if (newRole) {
+        setUserRole(newRole);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  return userRole === 'Agency' ? <AgencyProfileScreen {...props} /> : <HomeScreen {...props} />;
+};
+
+// Wrapper component for Notifications tab that conditionally renders based on role
+const NotificationTabWrapper = (props: any) => {
+  const [userRole, setUserRole] = useState<string>('owner');
+
+  useEffect(() => {
+    const initialRole = storage.getString('userRole');
+    if (initialRole) {
+      setUserRole(initialRole);
+    }
+
+    const subscription = storage.addOnValueChangedListener(() => {
+      const newRole = storage.getString('userRole');
+      if (newRole) {
+        setUserRole(newRole);
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  return userRole === 'Agency' ? <AgencyNotificationScreen {...props} /> : <NotificationScreen {...props} />;
+};
+
+const BottomTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -52,8 +99,8 @@ const BottomTabs = () => {
         },
       })}>
     
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Notifications" component={NotificationScreen} />
+          <Tab.Screen name="Home" component={HomeTabWrapper} />
+          <Tab.Screen name="Notifications" component={NotificationTabWrapper} />
           <Tab.Screen name="Send" component={SendScreen} />
     </Tab.Navigator>
   );

@@ -1,13 +1,12 @@
 import React from 'react';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import AgencyDrawer from './AgencyDrawer';
 import AgencyTabNavigator from '../../../agencySide/agencyTabNavigator/AgencyTabNavigator';
 import AgencyProfileScreen from '../../../agencySide/AgencyProfileScreen';
-
 import EditAgencyProfileScreen from '../../../agencySide/EditAgencyProfileScreen';
 
-const Drawer = createDrawerNavigator();
 
+const Drawer = createDrawerNavigator();
 
 const AgencyDrawerNavigator = () => {
   return (

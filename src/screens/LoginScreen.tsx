@@ -2,7 +2,6 @@ import {StyleSheet, Text, View, Image, Pressable,Alert} from 'react-native';
 import React, {useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/authSlice';
-
 import {SafeAreaView} from 'react-native';
 import AppInput from '../common/AppInput';
 import AppButton from '../common/AppButton';

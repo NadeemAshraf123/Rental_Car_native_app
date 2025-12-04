@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,88 +8,54 @@ import {
   Image,
   SafeAreaView,
   Alert,
-  Platform,
-  KeyboardAvoidingView,  // ✅ NEW (moved here)
-  ScrollView,            // ✅ NEW (moved here)
+  KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
-
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch} from 'react-redux';
-import { createAgency } from '../redux/agencycarSlice/AgencySlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { createAgencyThunk } from '../redux/agencycarSlice/AgencySlice';
+import { RootState } from '../redux/store';
 
-const API = axios.create({ baseURL: 'http://192.168.0.47:3000' });
-
-export default function AgencyRegistrationScreen({navigation}) {
+export default function AgencyRegistrationScreen({ navigation }: any) {
   const dispatch = useDispatch();
+
+  const userId = useSelector((state: RootState) => state.auth.user?.id);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
     if (!name || !phone || !address) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
 
-    try {
-      // --- 1. Check for Existing Agency ---
-      const res = await API.get(`/agencies?name=${encodeURIComponent(name)}`);
-      const existingAgency = res.data[0];
+    if (!userId) {
+      Alert.alert('Error', 'User not logged in');
+      return;
+    }
 
-      if (existingAgency) {
-        navigation.replace('AgencyDrawer', {
-          screen: 'AgencyProfileScreen',
-          params: { agencyId: existingAgency.id },
-        });
-        return;
-      }
+    const newAgency = { name, phone, address, userId };
 
-      // --- 2. Create New Agency (Redux Dispatch) ---
-      const newAgency = { name, phone, address };
-      const resultAction = await dispatch(createAgency(newAgency));
+    const resultAction = await dispatch(createAgencyThunk(newAgency));
 
-      // --- 3. Check for Successful Creation and Navigate ---
-      if (createAgency.fulfilled.match(resultAction)) {
-        const createdAgency = resultAction.payload;
+    if (resultAction?.payload) {
+      const createdAgency = resultAction.payload;
+      setName('');
+      setPhone('');
+      setAddress('');
 
-        setName('');
-        setPhone('');
-        setAddress('');
-
-        // 🎯 Navigation is here 
-        navigation.replace('AgencyDrawer', {
-          screen: 'AgencyProfileScreen',
-          params: { agencyId: createdAgency.id },
-        });
-      } else {
-        // Handle Redux/Thunk rejection (e.g., if createAgency failed on server)
-        Alert.alert('Registration Failed', resultAction.error.message || 'Unknown error');
-      }
-
-    } catch (error) {
-      // ⚠️ CATCHES API/Network Errors (Crucial for debugging!)
-      console.error("Registration Error:", error); 
-      Alert.alert('Network Error', 'Could not connect to the server or an error occurred.');
+      // Navigate to Home (which will show AgencyProfileScreen in tabs)
+      navigation.replace('Home');
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20} 
-      // ✅ NEW — helps Android avoid hiding inputs
-    >
-
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }} 
-        // ✅ NEW — paddingBottom ensures keyboard does NOT hide last field
-        keyboardShouldPersistTaps="handled"
-      >
-
-        <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.header}>
             <Image
               source={require('../assets/avatar/emoji.png')}
@@ -103,7 +68,6 @@ export default function AgencyRegistrationScreen({navigation}) {
           </View>
 
           <View style={styles.formContainer}>
-            
             <View style={styles.inputGroup}>
               <MaterialCommunityIcon
                 name="account"
@@ -117,7 +81,6 @@ export default function AgencyRegistrationScreen({navigation}) {
                 placeholderTextColor="#999"
                 value={name}
                 onChangeText={setName}
-                blurOnSubmit={false}
               />
             </View>
 
@@ -130,24 +93,17 @@ export default function AgencyRegistrationScreen({navigation}) {
                 keyboardType="phone-pad"
                 value={phone}
                 onChangeText={setPhone}
-                blurOnSubmit={false}
               />
             </View>
 
             <View style={styles.inputGroup}>
-              <Icon
-                name="map-pin"
-                size={24}
-                color="#666"
-                style={styles.inputIcon}
-              />
+              <Icon name="map-pin" size={24} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="address"
                 placeholderTextColor="#999"
                 value={address}
                 onChangeText={setAddress}
-                blurOnSubmit={false}
               />
             </View>
 
@@ -157,12 +113,12 @@ export default function AgencyRegistrationScreen({navigation}) {
           </View>
 
           <View style={styles.footerCircle} />
-        </SafeAreaView>
-
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

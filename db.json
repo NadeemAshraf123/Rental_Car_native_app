@@ -1,43 +1,651 @@
 {
   "users": [
     {
-      "id": "1",
-      "fullName": "Ali Raza",
-      "email": "ali@example.com",
-      "password": "123456"
+      "id": "7481",
+      "fullName": "Ali",
+      "email": "ali123@gmail.com",
+      "password": "123"
+    },
+    {
+      "id": "55ee",
+      "fullName": "C",
+      "email": "c123@gmail.com",
+      "password": "123"
     }
   ],
   "agencies": [
     {
-      "id": "716b",
-      "name": "My Agency",
-      "phone": "1234567890",
-      "address": "Bahawalngrpure"
+      "id": "3b04",
+      "name": "A",
+      "phone": "12",
+      "address": "A",
+      "userId": "7481"
+    },
+    {
+      "id": "36cf",
+      "name": "C",
+      "phone": "21",
+      "address": "C",
+      "userId": "55ee"
     }
   ],
   "agencyCars": [
     {
-      "id": "ecbe",
-      "name": "Hyundai ",
+      "id": "064d",
+      "name": "Qw",
       "image": "white.png",
       "features": [
         {
           "icon": "automatic",
-          "text": "Automatic"
+          "text": "Fgf"
         },
         {
           "icon": "doors",
-          "text": "4-Doors"
+          "text": "Ggh"
         },
         {
           "icon": "mileage",
-          "text": "320 km"
+          "text": "Yt"
+        },
+        {
+          "icon": "ac",
+          "text": "Ytg"
+        }
+      ],
+      "agencyId": "3b04"
+    },
+    {
+      "id": "29fa",
+      "name": "Hg",
+      "image": "blue.png",
+      "features": [
+        {
+          "icon": "automatic",
+          "text": "Gy"
+        },
+        {
+          "icon": "doors",
+          "text": "Yt"
+        },
+        {
+          "icon": "mileage",
+          "text": "Ty"
+        },
+        {
+          "icon": "ac",
+          "text": "Hg"
+        }
+      ],
+      "agencyId": "36cf"
+    },
+    {
+      "id": "ea5e",
+      "name": "Audi",
+      "image": "red1.png",
+      "features": [
+        {
+          "icon": "automatic",
+          "text": "Automatic "
+        },
+        {
+          "icon": "doors",
+          "text": "4 Doors"
+        },
+        {
+          "icon": "mileage",
+          "text": "Dgynx"
         },
         {
           "icon": "ac",
           "text": "AC"
         }
-      ]
+      ],
+      "agencyId": "3b04"
+    },
+    {
+      "id": "dc34",
+      "name": "Cuetex",
+      "image": "black1. png",
+      "features": [
+        {
+          "icon": "automatic",
+          "text": "Automatically "
+        },
+        {
+          "icon": "doors",
+          "text": "5-Doors"
+        },
+        {
+          "icon": "mileage",
+          "text": "Alfsuvmxf"
+        },
+        {
+          "icon": "ac",
+          "text": "AC Time"
+        }
+      ],
+      "agencyId": "3b04"
+    },
+    {
+      "id": "4dee",
+      "name": "Sedaan",
+      "image": "black2.png",
+      "features": [
+        {
+          "icon": "automatic",
+          "text": "Automatic "
+        },
+        {
+          "icon": "doors",
+          "text": "3-Doors"
+        },
+        {
+          "icon": "mileage",
+          "text": "380/km"
+        },
+        {
+          "icon": "ac",
+          "text": "A/C"
+        }
+      ],
+      "agencyId": "3b04"
+    },
+    {
+      "id": "1d5b",
+      "name": "Jugalli",
+      "image": "white.png",
+      "features": [
+        {
+          "icon": "automatic",
+          "text": "Automatic "
+        },
+        {
+          "icon": "doors",
+          "text": "2-Doors"
+        },
+        {
+          "icon": "mileage",
+          "text": "340/km"
+        },
+        {
+          "icon": "ac",
+          "text": "A/C"
+        }
+      ],
+      "agencyId": "3b04"
+    }
+  ],
+  "homeCars": {
+    "categories": [
+      "All",
+      "Peugeot",
+      "Hyundai",
+      "Audi",
+      "KIA",
+      "Toyota Hilux"
+    ],
+    "cars": [
+      {
+        "id": 1,
+        "name": "Sedan",
+        "image": "Car3.png",
+        "rating": 5
+      },
+      {
+        "id": 2,
+        "name": "SUV",
+        "image": "Car2.png",
+        "rating": 4
+      },
+      {
+        "id": 3,
+        "name": "Hatchback",
+        "image": "Car1.png",
+        "rating": 3
+      },
+      {
+        "id": 4,
+        "name": "Convertible",
+        "image": "cars.png",
+        "rating": 5
+      },
+      {
+        "id": 5,
+        "name": "Coupe",
+        "image": "Car2.png",
+        "rating": 4
+      },
+      {
+        "id": 6,
+        "name": "Compact",
+        "image": "Car1.png",
+        "rating": 4
+      }
+    ]
+  },
+  "homeAgencies": {
+    "categories": [
+      "All",
+      "LOVEHA",
+      "MAGI Car",
+      "ARC",
+      "Deficar",
+      "Aymen car"
+    ],
+    "items": [
+      {
+        "id": 1,
+        "name": "ARC Rental",
+        "image": "agency1.png",
+        "rating": 4.8
+      },
+      {
+        "id": 2,
+        "name": "MAGI Car",
+        "image": "agency2.png",
+        "rating": 4.5
+      },
+      {
+        "id": 3,
+        "name": "Deficar Agency",
+        "image": "agency6.png",
+        "rating": 4.2
+      },
+      {
+        "id": 4,
+        "name": "Aymen Rentals",
+        "image": "agency44.png",
+        "rating": 4.7
+      },
+      {
+        "id": 5,
+        "name": "Autos VIP",
+        "image": "agency1.png",
+        "rating": 4.9
+      },
+      {
+        "id": 6,
+        "name": "Premium Drive",
+        "image": "agency2.png",
+        "rating": 4.6
+      }
+    ]
+  },
+  "homeFamous": {
+    "categories": [
+      "All",
+      "Top Rated",
+      "Luxury",
+      "Budget",
+      "SUV",
+      "Electric"
+    ],
+    "items": [
+      {
+        "id": 1,
+        "name": "Audi A4 2023",
+        "detail": "Lux | 5/day",
+        "image": "white.png",
+        "price": "250$"
+      },
+      {
+        "id": 2,
+        "name": "Hyundai i10",
+        "detail": "Budget | 4/day",
+        "image": "famous3.png",
+        "price": "80$"
+      },
+      {
+        "id": 3,
+        "name": "Toyota Hilux",
+        "detail": "Truck | 3/day",
+        "image": "Car2.png",
+        "price": "180$"
+      },
+      {
+        "id": 4,
+        "name": "Peugeot 301",
+        "detail": "Sedan | 5/day",
+        "image": "agency2.png",
+        "price": "120$"
+      },
+      {
+        "id": 5,
+        "name": "KIA Sportage",
+        "detail": "SUV | 4/day",
+        "image": "agency7.png",
+        "price": "200$"
+      },
+      {
+        "id": 6,
+        "name": "City Compact",
+        "detail": "Budget | 4/day",
+        "image": "famous3.png",
+        "price": "90$"
+      }
+    ]
+  },
+  "carDetails": [
+    {
+      "id": "1",
+      "name": "Sedan",
+      "rating": 4.9,
+      "reviews": 230,
+      "price": 9000,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "4 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "4 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Manual",
+          "type": "manual"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Diesel",
+          "subtitle": "Common Fuel Injection"
+        },
+        {
+          "icon": "thermometer-half",
+          "title": "Cool Seat",
+          "subtitle": "Temp Control on seat"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 11s"
+        }
+      ],
+      "renter": {
+        "name": "Deficar",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    },
+    {
+      "id": "2",
+      "name": "SUV",
+      "rating": 4.7,
+      "reviews": 180,
+      "price": 11000,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "5 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "5 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Automatic",
+          "type": "auto"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Petrol",
+          "subtitle": "Fuel efficient"
+        },
+        {
+          "icon": "thermometer-half",
+          "title": "Heated Seats",
+          "subtitle": "Winter comfort"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 9s"
+        }
+      ],
+      "renter": {
+        "name": "ARC Rentals",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    },
+    {
+      "id": "3",
+      "name": "Hatchback",
+      "rating": 4.3,
+      "reviews": 95,
+      "price": 7000,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "4 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "3 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Manual",
+          "type": "manual"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Petrol",
+          "subtitle": "City friendly"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 12s"
+        }
+      ],
+      "renter": {
+        "name": "City Drive",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Convertible",
+      "rating": 4.8,
+      "reviews": 150,
+      "price": 13000,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "2 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "2 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Automatic",
+          "type": "auto"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Petrol",
+          "subtitle": "Sport mode"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 7s"
+        }
+      ],
+      "renter": {
+        "name": "Premium Cars",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Coupe",
+      "rating": 4.6,
+      "reviews": 120,
+      "price": 11500,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "4 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "2 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Manual",
+          "type": "manual"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Diesel",
+          "subtitle": "Long range"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 8s"
+        }
+      ],
+      "renter": {
+        "name": "Deficar",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    },
+    {
+      "id": "6",
+      "name": "Compact",
+      "rating": 4.2,
+      "reviews": 80,
+      "price": 6500,
+      "specs": [
+        {
+          "icon": "phone-portrait-outline",
+          "label": "4 Seats",
+          "type": "seat"
+        },
+        {
+          "icon": "car-door",
+          "label": "5 Doors",
+          "type": "door"
+        },
+        {
+          "icon": "repeat-outline",
+          "label": "Manual",
+          "type": "manual"
+        },
+        {
+          "icon": "snow",
+          "label": "Air Conditioning",
+          "type": "ac"
+        }
+      ],
+      "features": [
+        {
+          "icon": "gas-station",
+          "title": "Petrol",
+          "subtitle": "Very economic"
+        },
+        {
+          "icon": "speedometer",
+          "title": "Acceleration",
+          "subtitle": "0-100km / 13s"
+        }
+      ],
+      "renter": {
+        "name": "City Compact",
+        "role": "Renter",
+        "image": "avatar1.jpg"
+      }
+    }
+  ],
+  "rentalBooking": [
+    {
+      "id": "1764847932908",
+      "carId": "2",
+      "carName": "SUV",
+      "pricePerDay": 11000,
+      "bookedBy": "006f",
+      "bookingDate": "2025-12-04T11:32:12.908Z",
+      "status": "pending"
+    },
+    {
+      "id": "1764851942102",
+      "carId": 2,
+      "carName": "SUV",
+      "carImage": "Car2.png",
+      "startDate": null,
+      "endDate": null,
+      "pickUpTime": null,
+      "returnTime": null,
+      "bookedBy": "TEMP_USER_01",
+      "createdAt": "2025-12-04T12:39:02.102Z"
+    },
+    {
+      "id": "1764859535877",
+      "carId": 2,
+      "carName": "SUV",
+      "carImage": "Car2.png",
+      "startDate": null,
+      "endDate": null,
+      "pickUpTime": null,
+      "returnTime": null,
+      "bookedBy": "TEMP_USER_01",
+      "createdAt": "2025-12-04T14:45:35.877Z"
     }
   ]
 }

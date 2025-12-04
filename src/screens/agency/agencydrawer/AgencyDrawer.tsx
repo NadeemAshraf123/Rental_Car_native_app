@@ -1,40 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   Switch,
-  ScrollView,
-  Alert,
   StyleSheet,
+  ScrollView,
+  useColorScheme,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useSelector, useDispatch } from 'react-redux';
-import { storage } from '../../../../App';
-import { getAgencyById } from '../../../redux/agencycarSlice/AgencySlice';
+import {DrawerContentComponentProps} from '@react-navigation/drawer';
+// 💡 NEW: Import useSelector to access Redux state
+import {useSelector, useDispatch} from 'react-redux';
+import {useRoute} from '@react-navigation/native';
+import {storage} from '../../../../App';
+import {getAgencyById} from '../../../redux/agencycarSlice/AgencySlice';
 
-// ✅ Updated: use Redux only, no more route.params
-const AgencyDrawer = ({ navigation }: any) => {
+interface AgencyDrawerProps extends DrawerContentComponentProps {}
+
+const AgencyDrawer: React.FC<AgencyDrawerProps> = ({ navigation }) => {
+
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [themeLight, setThemeLight] = useState(true);
   const [isAccountOptionsOpen, setIsAccountOptionsOpen] = useState(false);
   const [activeAccount, setActiveAccount] = useState<'owner' | 'Agency'>('owner');
 
-  // ✅ Use Redux currentAgency for all agency data
   const currentAgency = useSelector((state: any) => state.agency.currentAgency);
 
-  // ✅ Get agencyId directly from Redux state
-  const agencyId = currentAgency?.id;
+  const profileScreenId = route.params?.agencyId;
 
-  // ✅ Fetch agency if not already loaded (e.g., after app restart)
+  const resolvedAgencyId = currentAgency?.id || profileScreenId;
+
   useEffect(() => {
-    if (!currentAgency) {
-      dispatch(getAgencyById(1)); // Replace '1' with your logic to get logged-in agency ID
+    if (!currentAgency && profileScreenId) {
+      dispatch(getAgencyById(profileScreenId));
     }
-  }, [currentAgency, dispatch]);
+  }, [profileScreenId, currentAgency]);
+
+
 
   const isDark = !themeLight;
 
@@ -51,11 +59,11 @@ const AgencyDrawer = ({ navigation }: any) => {
       navigation.replace('Home');
     }
   };
-
-  // ✅ Load stored user role from MMKV storage
   useEffect(() => {
     const storedRole = storage.getString('userRole') as 'owner' | 'Agency';
-    if (storedRole) setActiveAccount(storedRole);
+    if (storedRole) {
+      setActiveAccount(storedRole);
+    }
   }, []);
 
   return (
@@ -78,7 +86,6 @@ const AgencyDrawer = ({ navigation }: any) => {
         />
       </View>
 
-      {/* Account Switch Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
@@ -91,7 +98,11 @@ const AgencyDrawer = ({ navigation }: any) => {
             <Text style={dynamicStyles.rowText}>Switch the account</Text>
             <View style={dynamicStyles.SwitchiconContainer}>
               <Icon
-                name={isAccountOptionsOpen ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+                name={
+                  isAccountOptionsOpen
+                    ? 'keyboard-arrow-up'
+                    : 'keyboard-arrow-down'
+                }
                 size={20}
                 color="#fff"
               />
@@ -104,11 +115,14 @@ const AgencyDrawer = ({ navigation }: any) => {
             <TouchableOpacity
               style={[
                 dynamicStyles.accountOptionRow,
-                activeAccount === 'Agency' && dynamicStyles.accountOptionRowActive,
+                activeAccount === 'Agency' &&
+                  dynamicStyles.accountOptionRowActive,
               ]}
               onPress={() => handleAccountSelection('Agency')}>
               <View style={dynamicStyles.radioDot}>
-                {activeAccount === 'Agency' && <View style={dynamicStyles.radioDotActive} />}
+                {activeAccount === 'Agency' && (
+                  <View style={dynamicStyles.radioDotActive} />
+                )}
               </View>
               <Text style={dynamicStyles.accountOptionText}>Agency</Text>
             </TouchableOpacity>
@@ -116,11 +130,14 @@ const AgencyDrawer = ({ navigation }: any) => {
             <TouchableOpacity
               style={[
                 dynamicStyles.accountOptionRow,
-                activeAccount === 'owner' && dynamicStyles.accountOptionRowActive,
+                activeAccount === 'owner' &&
+                  dynamicStyles.accountOptionRowActive,
               ]}
               onPress={() => handleAccountSelection('owner')}>
               <View style={dynamicStyles.radioDot}>
-                {activeAccount === 'owner' && <View style={dynamicStyles.radioDotActive} />}
+                {activeAccount === 'owner' && (
+                  <View style={dynamicStyles.radioDotActive} />
+                )}
               </View>
               <Text style={dynamicStyles.accountOptionText}>User</Text>
             </TouchableOpacity>
@@ -128,14 +145,14 @@ const AgencyDrawer = ({ navigation }: any) => {
         )}
       </View>
 
-      {/* Profile Options Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity
           style={dynamicStyles.row}
           onPress={() => {
-            if (agencyId) {
-              // ✅ Updated: Use Redux currentAgency.id instead of route.params
-              navigation.navigate('EditAgencyProfile', { agencyId });
+            if (resolvedAgencyId) {
+              navigation.navigate('EditAgencyProfile', {
+                agencyId: resolvedAgencyId,
+              });
             } else {
               Alert.alert('Profile Data Missing', 'Please login correctly.');
             }
@@ -147,16 +164,20 @@ const AgencyDrawer = ({ navigation }: any) => {
         <TouchableOpacity
           style={dynamicStyles.row}
           onPress={() => navigation.navigate('AgencyNotificationScreen')}>
-          <Icon name="notifications" size={15} color={isDark ? '#fff' : '#000'} />
+          <Icon
+            name="notifications"
+            size={15}
+            color={isDark ? '#fff' : '#000'}
+          />
           <Text style={dynamicStyles.rowText}>Notifications</Text>
           <View style={dynamicStyles.toggleContainer}>
-            <Text style={{ color: notificationsEnabled ? '#F9864A' : '#ccc' }}>
+            <Text style={{color: notificationsEnabled ? '#F9864A' : '#ccc'}}>
               {notificationsEnabled ? 'On' : 'Off'}
             </Text>
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#fff', true: '#F9864A' }}
+              trackColor={{false: '#fff', true: '#F9864A'}}
             />
           </View>
         </TouchableOpacity>
@@ -170,7 +191,6 @@ const AgencyDrawer = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
 
-      {/* Theme & Security Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
           <Icon name="security" size={15} color={isDark ? '#fff' : '#000'} />
@@ -200,7 +220,6 @@ const AgencyDrawer = ({ navigation }: any) => {
         </View>
       </View>
 
-      {/* Help & Support Card */}
       <View style={dynamicStyles.card}>
         <TouchableOpacity style={dynamicStyles.row}>
           <Icon
@@ -237,7 +256,6 @@ const AgencyDrawer = ({ navigation }: any) => {
     </ScrollView>
   );
 };
-
 
 export default AgencyDrawer;
 

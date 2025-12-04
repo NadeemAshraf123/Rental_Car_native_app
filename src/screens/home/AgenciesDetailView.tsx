@@ -2,18 +2,27 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
+interface AgencyItem {
+  id: number;
+  name: string;
+  image: any; // string key from API or require(...)
+  rating: number;
+}
 
+interface AgenciesDetailViewProps {
+  categories: string[];
+  items: AgencyItem[];
+}
 
-const AGENCY_CATEGORIES = ['All', 'LOVEHA', 'MAGI Car', 'ARC', 'Deficar', 'Aymen car'];
-const AGENCY_ITEMS = [
-    { id: 1, name: 'ARC Rental', image: require('../../assets/homeCars/homeAgenciesImages/agency1.png'), rating: 4.8 },
-    { id: 2, name: 'MAGI Car', image: require('../../assets/homeCars/homeAgenciesImages/agency2.png'), rating: 4.5 },
-    { id: 3, name: 'Deficar Agency', image: require('../../assets/homeCars/homeAgenciesImages/agency6.png'), rating: 4.2 },
-    { id: 4, name: 'Aymen Rentals', image: require('../../assets/homeCars/homeAgenciesImages/agency44.png'), rating: 4.7 },
-    { id: 5, name: 'Autos VIP', image: require('../../assets/homeCars/homeAgenciesImages/agency1.png'), rating: 4.9 },
-];
+// Map image keys from API/db.json to actual require() calls
+const agencyImageMap: Record<string, any> = {
+  'agency1.png': require('../../assets/homeCars/homeAgenciesImages/agency1.png'),
+  'agency2.png': require('../../assets/homeCars/homeAgenciesImages/agency2.png'),
+  'agency6.png': require('../../assets/homeCars/homeAgenciesImages/agency6.png'),
+  'agency44.png': require('../../assets/homeCars/homeAgenciesImages/agency44.png'),
+};
 
-const AgenciesDetailView = ({ navigation }) => {
+const AgenciesDetailView: React.FC<AgenciesDetailViewProps> = ({ categories, items }) => {
     const [activeCategory, setActiveCategory] = useState('All');
 
     return (
@@ -21,7 +30,7 @@ const AgenciesDetailView = ({ navigation }) => {
             <Text style={styles.categoryTitle}> Catagories</Text>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                {AGENCY_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                     <TouchableOpacity
                         key={cat}
                         style={[
@@ -44,10 +53,16 @@ const AgenciesDetailView = ({ navigation }) => {
 
             {/* Main Horizontal Content (Agency Cards) */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.itemScroll}>
-                {AGENCY_ITEMS.map((item) => (
+                {items.map((item) => {
+                    const source =
+                      typeof item.image === 'string'
+                        ? agencyImageMap[item.image] || agencyImageMap['agency1.png']
+                        : item.image;
+
+                    return (
                     <TouchableOpacity key={item.id} style={styles.itemCard}>
                         {/* Image Container with Text Overlay */}
-                        <Image source={item.image} style={styles.itemImage} />
+                        <Image source={source} style={styles.itemImage} />
                         
                         {/* Text Overlay for Agency Name */}
                         <View style={styles.textOverlay}>
@@ -59,7 +74,7 @@ const AgenciesDetailView = ({ navigation }) => {
                             <Text style={styles.ratingText}>⭐️ {item.rating} Rating</Text>
                         </View>
                     </TouchableOpacity>
-                ))}
+                )})}
             </ScrollView>
         </View>
     );

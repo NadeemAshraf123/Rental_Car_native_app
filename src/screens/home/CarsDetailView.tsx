@@ -9,49 +9,27 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const CAR_CATEGORIES = [
-  'All',
-  'Peugeot',
-  'Hyundai',
-  'Audi',
-  'KIA',
-  'Toyota Hilux',
-];
+export interface CarItem {
+  id: number;
+  name: string;
+  image: any; // will accept a mapped require(...) or string key from API
+  rating: number;
+}
 
-const CAR_ITEMS = [
-  {
-    id: 1,
-    name: 'Sedan',
-    image: require('../../assets/homeCars/Car3.png'),
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: 'SUV',
-    image: require('../../assets/homeCars/Car2.png'),
-    rating: 4,
-  },
-  {
-    id: 3,
-    name: 'Hatchback',
-    image: require('../../assets/homeCars/Car1.png'),
-    rating: 3,
-  },
-  {
-    id: 4,
-    name: 'Convertible',
-    image: require('../../assets/homeCars/homeAgenciesImages/cars.png'),
-    rating: 5,
-  },
-  {
-    id: 5,
-    name: 'Coupe',
-    image: require('../../assets/homeCars/homeAgenciesImages/cars.png'),
-    rating: 4,
-  },
-];
+interface CarsDetailViewProps {
+  categories: string[];
+  items: CarItem[];
+}
 
-const CarsDetailView = () => {
+// Map image keys from API/db.json to actual require() calls
+const carImageMap: Record<string, any> = {
+  'Car1.png': require('../../assets/homeCars/Car1.png'),
+  'Car2.png': require('../../assets/homeCars/Car2.png'),
+  'Car3.png': require('../../assets/homeCars/Car3.png'),
+  'cars.png': require('../../assets/homeCars/homeAgenciesImages/cars.png'),
+};
+
+const CarsDetailView: React.FC<CarsDetailViewProps> = ({ categories, items }) => {
   const [activeCategory, setActiveCategory] = React.useState('All');
     const navigation = useNavigation();
 
@@ -63,7 +41,7 @@ const CarsDetailView = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.categoryScroll}>
-        {CAR_CATEGORIES.map(cat => (
+        {categories.map(cat => (
           <TouchableOpacity
             key={cat}
             style={[
@@ -85,19 +63,25 @@ const CarsDetailView = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.itemScroll}>
-        {CAR_ITEMS.map(item => (
+        {items.map(item => {
+          const source =
+            typeof item.image === 'string'
+              ? carImageMap[item.image] || carImageMap['Car1.png']
+              : item.image;
+
+          return (
           <TouchableOpacity
             key={item.id}
             style={styles.itemCard}
-            onPress={() =>
-              navigation.navigate('CarsDetailScreen', {car: item})
-            }>
+            onPress={() => {
+              (navigation as any).navigate('CarsDetailScreen', { car: item });
+            }}>
             <View style={styles.itemCard}>
-              <Image source={item.image} style={styles.itemImage} />
+              <Image source={source} style={styles.itemImage} />
               <Text>Item: {item.name}</Text>
             </View>
           </TouchableOpacity>
-        ))}
+        )})}
       </ScrollView>
     </View>
   );
